@@ -6,13 +6,15 @@ export default function ProfileIcon({
   radius = 25,
   borderSize,
   borderColor = "black",
+  bgColor,
 }) {
   return (
     <div
-      className={`rounded-${radius}px ${
-        borderSize ? `border-${borderSize}` : ""
-      } ${borderColor ? `border-${borderColor}` : ""}`}
+      className={`rounded-full ${borderSize ? `border-${borderSize}` : ""} ${
+        borderColor ? `border-${borderColor}` : ""
+      }`}
       style={{
+        backgroundColor: bgColor,
         backgroundImage: url ? `url(${url})` : null,
         backgroundSize: "cover",
         backgroundPosition: "center",

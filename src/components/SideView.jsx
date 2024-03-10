@@ -4,7 +4,8 @@ import ListItem from "./ListItem";
 import AppIcon from "./AppIcon";
 
 export default function SideView({
-  categories,
+  selectedCategory,
+  categoriesGroups,
   onClose,
   onCreateNew,
   onCategoryClick,
@@ -14,7 +15,8 @@ export default function SideView({
       <SideHeader onCreateNew={onCreateNew} />
       <div className="grow">
         <CategoryGroupList
-          categories={categories}
+          selectedCategory={selectedCategory}
+          categoriesGroups={categoriesGroups}
           onCategoryClick={onCategoryClick}
         />
       </div>
@@ -22,10 +24,11 @@ export default function SideView({
         title={"Upgrade Plan"}
         subtitle={"Get GPT-4"}
         borderColor={"black"}
+        asset={"team.svg"}
       />
-      <ListItem title={"Abimbola Michael"} />
-      <div className="absolute top-[15px] right-[-30px] md:hidden">
-        <AppIcon name={"close.svg"} onClick={onClose} />
+      <ListItem title={"Abimbola Michael"} asset={"team.svg"} />
+      <div className="absolute top-[18px] right-[-30px] md:hidden">
+        <AppIcon name={"close.svg"} color={"white"} onClick={onClose} />
       </div>
     </div>
   );

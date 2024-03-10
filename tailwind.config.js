@@ -4,12 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        "light-black": "rgb(0, 0, 0, 0.8)",
-        "lighter-black": "rgb(0, 0, 0, 0.5)",
-        "lightest-black": "rgb(0, 0, 0, 0.2)",
-        "light-white": "rgb(255, 255, 255, 0.8)",
-        "lighter-white": "rgb(255, 255, 255, 0.5)",
-        "lightest-white": "rgb(255, 255, 255, 0.2)",
+        tint: {
+          light: "rgb(0, 0, 0)",
+          DEFAULT: "rgb(0, 0, 0)",
+          dark: "rgb(255, 255, 255)",
+        },
+        "light-tint": {
+          light: "rgb(0, 0, 0, 0.8)",
+          DEFAULT: "rgb(0, 0, 0, 0.8)",
+          dark: "rgb(255, 255, 255, 0.8)",
+        },
+        "lighter-tint": {
+          light: "rgb(0, 0, 0, 0.5)",
+          DEFAULT: "rgb(0, 0, 0, 0.5)",
+          dark: "rgb(255, 255, 255, 0.5)",
+        },
+        "lightest-tint": {
+          light: "rgb(0, 0, 0, 0.2)",
+          DEFAULT: "rgb(0, 0, 0, 0.2)",
+          dark: "rgb(255, 255, 255, 0.2)",
+        },
       },
     },
   },

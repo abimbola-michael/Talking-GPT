@@ -21,9 +21,9 @@ export default function ListItem({
           borderColor={borderColor}
         />
       )}
-      <div className="flex flex-col">
-        <p className="font-bold">{title}</p>
-        {subtitle && <p className="text-stone-700">{subtitle}</p>}
+      <div className="flex flex-col text-white px-3 py-2">
+        <p className="font-bold text-sm">{title}</p>
+        {subtitle && <p className="text-white text-sm">{subtitle}</p>}
       </div>
     </div>
   );

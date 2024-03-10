@@ -33,3 +33,7 @@ export function getChatOutputs(message) {
   }
   return chatOutputs;
 }
+function getCategriesGroups(categories) {
+  const categoriesGroups = [];
+  return categoriesGroups;
+}

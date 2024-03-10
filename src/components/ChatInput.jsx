@@ -1,17 +1,20 @@
 import { useState } from "react";
 import ActionButton from "./ActionButton";
 
-export default function ChatInput({ onSend }) {
+export default function ChatInput({ onSend, onEnterVoice }) {
   const [value, setValue] = useState("");
   return (
     <div className="flex items-end p-3 gap-2">
       <input
-        className="w-full px-4 py-2 border border-lighter-black rounded-full"
+        className="w-full px-4 py-2 border border-lighter-tint rounded-full"
         type="text"
         placeholder="Message .."
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
+        }}
+        style={{
+          backgroundColor: "#00000000",
         }}
       />
       <div>
@@ -21,7 +24,7 @@ export default function ChatInput({ onSend }) {
             onClick={onSend}
           />
           <div className="absolute top-[-50px] left-0">
-            <ActionButton name={"listen.svg"} onClick={onSend} />
+            <ActionButton name={"listen.svg"} onClick={onEnterVoice} />
           </div>
         </div>
       </div>

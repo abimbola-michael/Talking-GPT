@@ -1,5 +1,5 @@
 import OpenAiLogo from "./OpenAiLogo";
-import ListItem from "./ListItem";
+import OutlinedButton from "./OutlinedButton";
 
 export default function NewChatView() {
   return (
@@ -8,21 +8,17 @@ export default function NewChatView() {
         <OpenAiLogo />
         <p className="font-bold text-2xl">How can I help you today?</p>
       </div>
-      <div className="flex items-center justify-start absolute bottom-0">
-        <div className="w-full grow">
-          <ListItem
+      <div className="w-full flex items-center justify-start absolute bottom-0 gap-4 px-4 py-10">
+        <div className="w-full">
+          <OutlinedButton
             title={"Help me pick"}
             subtitle={"a birthday for my mom"}
-            borderColor={"black"}
-            borderSize={2}
           />
         </div>
-        <div className="w-full grow">
-          <ListItem
-            title={"Help me pick"}
-            subtitle={"a birthday for my mom"}
-            borderColor={"black"}
-            borderSize={2}
+        <div className="w-full">
+          <OutlinedButton
+            title={"Recommend a dish"}
+            subtitle={"that would be best for me today and more"}
           />
         </div>
       </div>
