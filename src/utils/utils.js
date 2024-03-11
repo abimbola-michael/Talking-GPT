@@ -1,5 +1,8 @@
 import ChatOutput from "../models/chat_output";
 
+export const isDarkMode = window.matchMedia(
+  "(prefers-color-scheme: dark)"
+).matches;
 export function getChatOutputs(message) {
   message = message.trim();
   if (message.length === 0) return [];

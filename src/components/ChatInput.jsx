@@ -6,7 +6,7 @@ export default function ChatInput({ onSend, onEnterVoice }) {
   return (
     <div className="flex items-end p-3 gap-2">
       <input
-        className="w-full px-4 py-2 border border-lighter-tint rounded-full"
+        className="w-full px-4 py-2 border border-lighter-tint-dark dark:border-lighter-tint-light rounded-full"
         type="text"
         placeholder="Message .."
         value={value}

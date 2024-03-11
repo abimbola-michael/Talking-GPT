@@ -2,6 +2,7 @@ import SideHeader from "./SideHeader";
 import CategoryGroupList from "./CategoryGroupList";
 import ListItem from "./ListItem";
 import AppIcon from "./AppIcon";
+import { tintLightest } from "../colors";
 
 export default function SideView({
   selectedCategory,
@@ -23,10 +24,11 @@ export default function SideView({
       <ListItem
         title={"Upgrade Plan"}
         subtitle={"Get GPT-4"}
-        borderColor={"black"}
+        borderColor={tintLightest}
         asset={"team.svg"}
+        iconRadius={20}
       />
-      <ListItem title={"Abimbola Michael"} asset={"team.svg"} />
+      <ListItem title={"Abimbola Michael"} asset={"team.svg"} iconRadius={20} />
       <div className="absolute top-[18px] right-[-30px] md:hidden">
         <AppIcon name={"close.svg"} color={"white"} onClick={onClose} />
       </div>

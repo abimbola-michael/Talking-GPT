@@ -1,8 +1,12 @@
 import CssFilterConverter from "css-filter-converter";
+import { tint } from "../colors";
 
 export default function AppIcon({ name, url, alt, onClick, color, size = 20 }) {
   let filter = null;
-  if (name.endsWith(".svg") && color) {
+  if (!color) {
+    color = tint;
+  }
+  if (color) {
     if (color.startsWith("#")) {
       filter = CssFilterConverter.hexToFilter(color);
     } else if (color.startsWith("rgb")) {

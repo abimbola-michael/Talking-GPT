@@ -11,7 +11,7 @@ export default function ListItem({
   onClick,
 }) {
   return (
-    <div className="flex items-center" onClick={onClick}>
+    <div className="flex items-center gap-2 px-3 py-1" onClick={onClick}>
       {(asset || url) && (
         <ProfileIcon
           asset={asset}
@@ -21,7 +21,7 @@ export default function ListItem({
           borderColor={borderColor}
         />
       )}
-      <div className="flex flex-col text-white px-3 py-2">
+      <div className="flex flex-col text-white py-2">
         <p className="font-bold text-sm">{title}</p>
         {subtitle && <p className="text-white text-sm">{subtitle}</p>}
       </div>

@@ -5,19 +5,22 @@ export default function ProfileIcon({
   asset,
   radius = 25,
   borderSize,
-  borderColor = "black",
+  borderColor,
   bgColor,
+  bgImage,
 }) {
+  if (borderColor && !borderSize) {
+    borderSize = 1;
+  }
   return (
     <div
-      className={`rounded-full ${borderSize ? `border-${borderSize}` : ""} ${
-        borderColor ? `border-${borderColor}` : ""
-      }`}
+      className={`rounded-full ${
+        borderSize ? `border-[${borderSize}px]` : ""
+      } ${borderColor ? `border-[${borderColor}]` : ""} bg-center`}
       style={{
         backgroundColor: bgColor,
         backgroundImage: url ? `url(${url})` : null,
         backgroundSize: "cover",
-        backgroundPosition: "center",
         width: `${radius * 2}px`,
         height: `${radius * 2}px`,
       }}
