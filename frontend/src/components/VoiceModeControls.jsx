@@ -1,7 +1,7 @@
 import ActionButton from "./ActionButton";
 
 export default function VoiceModeControls({
-  onPlayPlause,
+  setPlayingPlause,
   onRecord,
   onEnterChat,
 }) {

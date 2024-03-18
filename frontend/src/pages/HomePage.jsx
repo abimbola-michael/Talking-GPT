@@ -1,11 +1,10 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import SideView from "../components/SideView";
 import ChatInput from "../components/ChatInput";
 import ChatList from "../components/ChatList";
 import NewChatView from "../components/NewChatView";
 import VoiceModeView from "../components/VoiceModeView";
-import { useTextToVoice, useVoiceToText } from "react-speakup";
 import Chat from "../models/chat";
 import {
   generateRandomString,
@@ -21,14 +20,10 @@ export default function HomePage() {
   const [chats, setChats] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categoriesGroups, setCategoriesGroups] = useState([]);
-  const messageRef = useRef("");
-  const [playId, setPlayId] = useState("");
-
-  //const [speakChat, setSpeakChat] = useState(null);
-
-  const { startListening, stopListening, transcript } = useVoiceToText();
-  // const { speak, resume, pause, ref, setVoice, voices, isSpeaking } =
-  //   useTextToVoice();
+  const [chatAction, setChatAction] = useState({
+    currentChat: null,
+    action: "",
+  });
 
   useEffect(() => {
     const chats = getChatsFromCategory(categoriesGroups, selectedCategory);
@@ -50,13 +45,12 @@ export default function HomePage() {
     setChats((prev) => [...prev, chat]);
   }
   function sendMessage(message) {
-    messageRef.current = message;
     const id = generateRandomString();
     const chat = new Chat(id, "me", message, Date.now(), "success");
     addChat(chat);
     generateResponseFromAi(message);
-    messageRef.current = "";
   }
+
   async function generateResponseFromAi(message) {
     const apiKey = import.meta.env.VITE_OPEN_API_KEY;
     const openai = new OpenAI({
@@ -79,23 +73,15 @@ export default function HomePage() {
       addChat(chat);
     }
   }
-  function executeOption(chat, option) {
-    switch (option) {
-      case "Regenerate":
-        break;
-      case "Copy":
-        break;
-      case "Share":
-        break;
-      case "Delete":
-        break;
-    }
-  }
+
   function speak(message) {
+    if (isSpeaking()) {
+      stop();
+    }
     const utterance = new SpeechSynthesisUtterance(message);
     utterance.onstart = () => {};
     utterance.onend = () => {
-      setPlayId("");
+      setChatAction({ currentChat: null, action: "" });
     };
     // utterance.voice = window.speechSynthesis.getVoices()[0];
     window.speechSynthesis.speak(utterance);
@@ -112,31 +98,32 @@ export default function HomePage() {
   function isSpeaking() {
     return window.speechSynthesis.speaking;
   }
-  function isPaused() {
-    return window.speechSynthesis.paused;
+
+  function updateAction({ currentChat, action }) {
+    if (action === "play") {
+      if (chatAction.currentChat !== currentChat) {
+        const message =
+          currentChat.name === "ai"
+            ? `I replied ${currentChat.message}`
+            : `You said ${currentChat.message}`;
+        speak(message);
+      } else {
+        resume();
+      }
+    } else if (action === "pause") {
+      pause();
+    } else if (action === "replay") {
+      speak(currentChat.message);
+    } else if (action === "") {
+      stop();
+    } else if (action === "regenerate") {
+    } else if (action === "copy") {
+    } else if (action === "share") {
+    } else if (action === "delete") {
+    }
+    setChatAction({ currentChat, action });
   }
 
-  function playChat(chat, result) {
-    if (result) {
-      if (isPaused()) {
-        resume();
-      } else {
-        //setSpeakChat(chat);
-        speak(chat.message);
-      }
-    } else {
-      pause();
-    }
-  }
-  function replayChat(chat) {
-    //setSpeakChat(chat);
-    speak(chat.message);
-  }
-  function stopPlayingChat(chat) {
-    stop();
-    setPlayId("");
-    //setSpeakChat(null);
-  }
   function createNewChat() {
     setSelectedCategory("");
     setChats([]);
@@ -150,11 +137,7 @@ export default function HomePage() {
       setIsOpened(false);
     }
   }
-  function vibrate() {
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-  }
+
   return (
     <div className="w-full h-full flex overflow-hidden" onClick={closeSideView}>
       <div
@@ -180,32 +163,15 @@ export default function HomePage() {
               {chats.length > 0 ? (
                 <ChatList
                   chats={chats}
-                  onPlay={playChat}
-                  onReplay={replayChat}
-                  onOptionClick={executeOption}
-                  onStopPlaying={stopPlayingChat}
-                  playId={playId}
-                  setPlayId={setPlayId}
+                  chatAction={chatAction}
+                  setChatAction={updateAction}
                 />
               ) : (
                 <NewChatView />
               )}
             </div>
             <ChatInput
-              message={
-                transcript
-                  ? `${messageRef.current} ${transcript}`
-                  : messageRef.current
-              }
               onSend={sendMessage}
-              onSpeak={() => {
-                vibrate();
-                startListening();
-              }}
-              onSpeakEnd={() => {
-                vibrate();
-                stopListening();
-              }}
               onEnterVoice={() => toggleMode("voice")}
             />
           </>
@@ -217,9 +183,6 @@ export default function HomePage() {
           ></div>
         )}
       </div>
-      {/* <div ref={ref} className="text-white w-0 h-0">
-        {speakChat?.message}
-      </div> */}
     </div>
   );
 }

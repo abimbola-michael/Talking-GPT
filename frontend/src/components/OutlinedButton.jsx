@@ -13,7 +13,9 @@ export default function OutlinedButton({
       onClick={onClick}
       style={{}}
     >
-      {icon && <AppIcon name={icon} size={24} />}
+      {icon && (
+        <AppIcon name={icon} size={24} useTint={title.includes("Apple")} />
+      )}
       <div className="w-full flex flex-col items-start">
         {title && (
           <p className="text-md line-clamp-1 dark:text-white">{title}</p>

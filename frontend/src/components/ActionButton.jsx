@@ -11,10 +11,12 @@ export default function ActionButton({
   bgColor,
 }) {
   const longPressTimeout = useRef();
+  const longPress = useRef(false);
   const handleMouseDown = () => {
     // Set a timeout for the long press event
     const timeout = setTimeout(() => {
-      onLongClick();
+      onLongClick?.();
+      longPress.current = true;
       // Your long press action goes here
     }, 1000); // Adjust the duration as needed
     //setLongPressTimeout(timeout);
@@ -24,35 +26,13 @@ export default function ActionButton({
   const handleMouseUp = () => {
     // Clear the timeout when button is released
     clearTimeout(longPressTimeout.current);
-    onLongClickEnd();
+    onLongClickEnd?.();
   };
-  // useEffect(() => {
-  //   return () => {
-  //     clear();
-  //   };
-  // }, []);
-  // function start() {
-  //   clear();
-  //   const timer = setTimeout(() => {
-  //     onLongClick();
-  //     clear();
-  //   }, 1000);
-  //   timerRef.current = timer;
-  // }
-  // function clear() {
-  //   if (timerRef.current) {
-  //     clearTimeout(timerRef.current);
-  //     timerRef.current = null;
-  //   }
-  // }
-  // function stop() {
-  //   onLongClickEnd();
-  //   clear();
-  // }
+
   return (
     <div
       className="flex rounded-full items-center justify-center"
-      onClick={onClick}
+      onClick={longPress.current ? null : onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}

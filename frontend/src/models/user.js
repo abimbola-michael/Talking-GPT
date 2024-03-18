@@ -1,8 +1,8 @@
+//Do for this
 class User {
-  constructor(name, email, phone, time) {
+  constructor(name, email, timeJoined) {
     this.name = name;
     this.email = email;
-    this.phone = phone;
-    this.time = time;
+    this.timeJoined = timeJoined;
   }
 }

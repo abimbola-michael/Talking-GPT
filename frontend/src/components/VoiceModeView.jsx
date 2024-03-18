@@ -2,17 +2,18 @@ import React from "react";
 import ProfileIcon from "./ProfileIcon";
 import VoiceModeControls from "./VoiceModeControls";
 import ActionButton from "./ActionButton";
+import { tint } from "../colors";
 
 export default function VoiceModeView({ onChangeToChat, onRecord }) {
   return (
-    <div className="h-full">
+    <div className="relative w-full h-full" style={{ color: tint }}>
       <div className="flex flex-col items-center mt-[20%]">
         <ProfileIcon
           asset={"microsoft_icon.png"}
           radius={70}
           bgColor={"green"}
         />
-        <h2 className="font-bold text-lg">Hotshot</h2>
+        <h2 className="font-bold text-lg">You</h2>
         <p className="text-md">{"What will you like me to help you with?"}</p>
       </div>
 

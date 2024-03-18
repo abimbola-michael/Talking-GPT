@@ -1,3 +1,4 @@
+//Do for this
 class Chat {
   constructor(id, name, message, time, status) {
     this.id = id;
