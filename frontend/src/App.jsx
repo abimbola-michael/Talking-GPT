@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import StartPage from "./pages/StartPage";
 import HomePage from "./pages/HomePage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <HomePage />,
+  },
+  {
+    path: "/onboarding",
+    element: <OnboardingPage />,
   },
 ]);
 function App() {
