@@ -3,6 +3,7 @@ import LoginButton from "../components/LoginButton";
 import LoginInput from "../components/LoginInput";
 import OpenAiLogo from "../components/OpenAiLogo";
 import OutlinedButton from "../components/OutlinedButton";
+import { onTint, tint } from "../colors";
 export default function LoginPage() {
   const navigate = useNavigate();
   function login() {
@@ -19,9 +20,12 @@ export default function LoginPage() {
     }
   }
   return (
-    <div className="h-full flex flex-col justify-start items-center px-[15%] md:px-[30%] gap-5 relative">
+    <div
+      className="h-full flex flex-col justify-start items-center px-[15%] md:px-[30%] gap-5 relative"
+      style={{ color: tint }}
+    >
       <div className="w-full absolute top-4 left-0 flex items-center justify-center">
-        <OpenAiLogo />
+        <OpenAiLogo color={onTint} />
       </div>
       <p className="font-bold text-3xl pt-[150px]">Welcome back</p>
       <LoginInput placeholder={"Email Address"} />

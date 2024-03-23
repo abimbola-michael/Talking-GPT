@@ -2,6 +2,7 @@ import React from "react";
 import LoginButton from "../components/LoginButton";
 import OpenAiLogo from "../components/OpenAiLogo";
 import { useNavigate } from "react-router-dom";
+import { appBgColor, onTint, tint } from "../colors";
 
 export default function StartPage() {
   const navigate = useNavigate();
@@ -13,7 +14,10 @@ export default function StartPage() {
   }
 
   return (
-    <div className="h-full w-full md:flex gap-4 px-[15%] md:px-[5%]">
+    <div
+      className="h-full w-full md:flex gap-4 px-[15%] md:px-[5%]"
+      style={{ color: tint }}
+    >
       <div className="flex gap-1 absolute top-2 left-2">
         <h1 className="font-bold text-lg">Talking GPT</h1>
       </div>
@@ -30,8 +34,8 @@ export default function StartPage() {
           <LoginButton title={"Sign up"} onClick={gotoSignup} />
         </div>
         <div className="absolute bottom-4 left-0 w-full flex flex-col justify-start items-center gap-3">
-          <div className="inline-flex items-center">
-            <OpenAiLogo />
+          <div className="inline-flex items-center gap-2">
+            <OpenAiLogo color={onTint} />
             <span className="font-bold text-md">OpenAI</span>
           </div>
           <div className="inline-flex items-center gap-3 text-sm text-lighter-tint">
