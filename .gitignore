@@ -24,3 +24,12 @@ dist-ssr
 *.sw?
 *.env
 config.js
+
+# ignore build directory 
+.build/ 
+
+# ignore node_modules directory
+node_modules/
+
+# ignore .env* files 
+.env* 
