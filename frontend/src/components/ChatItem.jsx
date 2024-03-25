@@ -3,10 +3,11 @@ import OpenAiLogo from "./OpenAiLogo";
 import ProfileIcon from "./ProfileIcon";
 import CodeText from "./CodeText";
 import NormalText from "./NormalText";
-import { onTint, tint, tintLighter } from "../colors";
+import { onTint, tint } from "../colors";
 import AppIcon from "./AppIcon";
 import PopupMenu from "./PopupMenu";
 import { formatTime } from "../utils/utils";
+import LoadingSignal from "./LoadingSignal";
 
 const menuOptions = ["Regenerate", "Copy", "Share", "Delete"];
 export default function ChatItem({
@@ -91,6 +92,7 @@ export default function ChatItem({
             </li>
           );
         })}
+        {status === "loading" && <LoadingSignal />}
       </ul>
       {/* <div className="flex justify-end items-center gap-1">
         <span className="text-xs" style={{ color: tintLighter }}>

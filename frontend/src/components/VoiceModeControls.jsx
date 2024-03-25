@@ -11,15 +11,6 @@ export default function VoiceModeControls({
       <ActionButton name="previous.svg" onClick={onRecord} />
       <ActionButton name="forward.svg" onClick={onRecord} />
       <ActionButton name="listen.svg" onClick={onRecord} />
-
-      {/* <div>
-        <div className="relative">
-          <ActionButton name="send.svg" onClick={onRecord} />
-          <div className="absolute top-[-50px] left-0">
-            <ActionButton name={"listen.svg"} onClick={onEnterChat} />
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }

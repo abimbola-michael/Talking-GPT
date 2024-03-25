@@ -1,18 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import AppIcon from "./AppIcon";
+import SearchInput from "./SearchInput";
 
-export default function Header({ onLeftClick, onMiddleClick, onRightClick }) {
+export default function Header({
+  mode,
+  opened,
+  searching,
+  setSearching,
+  onSearch,
+  categoryName,
+  toggleSearch,
+  onLeftClick,
+  onMiddleClick,
+  onRightClick,
+}) {
   return (
-    <div className="w-full flex justify-between items-center px-4 py-2">
-      <div className="md:hidden">
-        <AppIcon name="drawer_toggle.svg" onClick={onLeftClick} />
+    <div className="w-full flex justify-between items-center px-4 py-2 h-14">
+      <div className="md:invisible">
+        <AppIcon
+          name={opened ? "close.svg" : "drawer_menu.svg"}
+          size={24}
+          onClick={onLeftClick}
+        />
       </div>
-      <div className="inline-flex items-center gap-1" onClick={onMiddleClick}>
-        <span className="font-bold text-lg dark:text-white">Talking GPT</span>{" "}
-        {/* <span className="text-stone-700">3.5</span>
-        <AppIcon name="arrow_down.svg" size={15} onClick={onRightClick} /> */}
+      {searching ? (
+        <div className="w-[60%]">
+          <SearchInput placeholder={"Search Chats..."} onSearch={onSearch} />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
+          <p className="font-bold text-lg dark:text-white">Talking GPT</p>{" "}
+          <p className="text-sm dark:text-white">{categoryName}</p>{" "}
+        </div>
+      )}
+
+      <div className={mode === "chat" ? "visible" : "invisible"}>
+        <AppIcon
+          name={searching ? "close.svg" : "search.svg"}
+          size={24}
+          onClick={toggleSearch}
+        />
       </div>
-      <AppIcon name="write.svg" onClick={onRightClick} />
+      {/* <div className="flex gap-4 items-center">
+        
+      </div> */}
     </div>
   );
 }

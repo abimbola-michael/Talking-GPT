@@ -11,7 +11,7 @@ export default function ListItem({
   onClick,
 }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1" onClick={onClick}>
+    <div className="flex items-center gap-2 px-3 py-3" onClick={onClick}>
       {(asset || url) && (
         <ProfileIcon
           asset={asset}
