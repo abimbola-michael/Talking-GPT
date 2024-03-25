@@ -1,5 +1,4 @@
 const passport = require('passport');
-const keys = require('./keys');
 const GoogleStrategy = require('passport-google-oauth2').Strategy
 
 passport.use(new GoogleStrategy({
