@@ -1,38 +1,46 @@
-import React from "react";
-import AppIcon from "./AppIcon";
+import PopupMenuButton from "./PopupMenuButton";
+import CategoryInput from "./CategoryInput";
 
 export default function CategoryItem({
+  editCategory,
   selectedCategory,
-  category: { name, id, time },
+  categoryGroup,
+  category,
   onCategoryClick,
   onOptionClick,
-  onArchive,
+  onSaveCategory,
 }) {
+  const { name, id, time, chats } = category;
+  const options = ["Edit", "Delete"];
   return (
-    <li className="flex justify-between items-center hover:bg-lightest-tint hover:rounded-sm text-white py-1">
-      <p
-        className="text-sm"
-        onClick={onCategoryClick}
-        style={{
-          color: selectedCategory === name ? "green" : null,
-        }}
-      >
-        {category}
-      </p>
-      <div className="inline-flex gap-3">
-        <AppIcon
-          name={"more.svg"}
+    <li
+      className="flex justify-between items-center hover:bg-lightest-tint hover:rounded-sm text-white py-1 cursor-pointer"
+      onClick={() => onCategoryClick(category)}
+    >
+      {editCategory === name ? (
+        <CategoryInput
+          initialValue={name}
+          placeholder={"Write Category..."}
+          onSave={(value) => onSaveCategory(categoryGroup, value)}
+        />
+      ) : (
+        <p
+          className="text-sm"
+          style={{
+            color: selectedCategory === name ? "green" : null,
+          }}
+        >
+          {name}
+        </p>
+      )}
+      {name !== "General" && editCategory !== name && (
+        <PopupMenuButton
           size={20}
           color={"white"}
-          onClick={onOptionClick}
+          menuOptions={options}
+          onOptionClick={(option) => onOptionClick(categoryGroup, name, option)}
         />
-        <AppIcon
-          name={"archive.svg"}
-          size={20}
-          color={"white"}
-          onClick={onArchive}
-        />
-      </div>
+      )}
     </li>
   );
 }

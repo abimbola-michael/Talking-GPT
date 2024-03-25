@@ -1,5 +1,5 @@
-import CategoryGroup from "../components/CategoryGroup";
 import ChatOutput from "../models/chat_output";
+import CategoryGroup from "../models/category_group";
 
 export const isDarkMode = window.matchMedia(
   "(prefers-color-scheme: dark)"
@@ -73,7 +73,7 @@ export function getCategoriesGroups(categories) {
 
     if (catIndex === -1) {
       categoriesGroups.push(
-        new CategoryGroup(catIndex, [category], category.date)
+        new CategoryGroup(catIndex, [category], category.time)
       );
     } else {
       categoriesGroups[catIndex].categories.push(category);

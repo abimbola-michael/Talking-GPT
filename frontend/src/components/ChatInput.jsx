@@ -1,41 +1,47 @@
 import { useState } from "react";
 import ActionButton from "./ActionButton";
 import { tintLight } from "../colors";
-const recognition = new window.webkitSpeechRecognition();
-recognition.lang = "en-US";
+// const recognition = new window.webkitSpeechRecognition();
+// recognition.lang = "en-US";
 
-export default function ChatInput({ onSend, onEnterVoice }) {
-  const [value, setValue] = useState("");
-  const [isListening, setIsListening] = useState(false);
+export default function ChatInput({
+  initialValue,
+  onChange,
+  onSend,
+  onListen,
+  isListening,
+}) {
+  const [value, setValue] = useState(initialValue);
+  // const [isLongClick, setisLongClick] = useState(false);
 
-  recognition.onstart = () => {};
+  // recognition.onstart = () => {};
 
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    if (transcript.length > 0) {
-      setValue((value) => `${value} ${transcript}`);
-    }
-  };
+  // recognition.onresult = (event) => {
+  //   const transcript = event.results[0][0].transcript;
+  //   if (transcript.length > 0) {
+  //     setValue((value) => `${value} ${transcript}`);
+  //   }
+  // };
 
-  recognition.onend = () => {};
+  // recognition.onend = () => {};
 
-  const startRecognition = () => {
-    recognition.start();
-    setIsListening(true);
-    vibrate();
-  };
+  // const startListening = () => {
+  //   recognition.start();
+  //   setIsListening(true);
+  //   vibrate();
+  // };
 
-  const stopRecognition = () => {
-    recognition.stop();
-    setIsListening(false);
-    vibrate();
-  };
+  // const stopListening = () => {
+  //   recognition.stop();
+  //   setIsListening(false);
+  //   vibrate();
+  // };
 
-  function vibrate() {
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-  }
+  // function vibrate() {
+  //   if (navigator.vibrate) {
+  //     navigator.vibrate(100);
+  //   }
+  // }
   function handleInput(event) {
     if (event.key === "Enter") {
       onSend(value);
@@ -45,59 +51,52 @@ export default function ChatInput({ onSend, onEnterVoice }) {
 
   return (
     <div className="flex items-end p-3 gap-2" onKeyDown={handleInput}>
+      <div className="shrink-0">
+        <ActionButton
+          name={isListening ? "stop.svg" : "listen.svg"}
+          onClick={onListen}
+        />
+      </div>
+
       <input
-        className="w-full px-4 py-2 border border-black-lighter dark:border-white-lighter placeholder-black-lighter dark:placeholder-white-lighter focus:border-green-700 focus:outline-none rounded-full"
+        className="w-full px-4 py-2 border border-black-lighter dark:border-white-lighter placeholder-black-lighter dark:placeholder-white-lighter focus:border-green-700 focus:outline-none rounded-full line-clamp-5"
         type="text"
         placeholder="Write or speak something ..."
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
+          onChange(e.target.value);
         }}
         style={{
           backgroundColor: "#00000000",
           color: tintLight,
         }}
       />
-      {/* {isListening ? (
-        <div className="flex flex-col items-center gap-2">
-          <div className={`listening-icon ${isListening ? "listening" : ""}`} />
-          <div>Listening...</div>
-        </div>
-      ) : (
-        <input
-          className="w-full px-4 py-2 border border-black-lighter dark:border-white-lighter placeholder-black-lighter dark:placeholder-white-lighter focus:border-green-700 focus:outline-none rounded-full"
-          type="text"
-          placeholder="Message .."
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-          }}
-          style={{
-            backgroundColor: "#00000000",
-            color: tintLight,
+      <div className="shrink-0">
+        <ActionButton
+          name={"send.svg"}
+          onClick={() => {
+            onSend(value);
+            setValue("");
           }}
         />
-      )} */}
+      </div>
       <div>
-        <div className="relative">
+        {/* <div className="relative">
           <ActionButton
-            size={isListening ? 60 : 40}
+            // size={isListening ? 60 : 40}
             name={value.length > 0 ? "send.svg" : "record.svg"}
             onClick={() => {
               onSend(value);
               setValue("");
             }}
-            onLongClick={() => {
-              startRecognition();
-            }}
-            onLongClickEnd={() => {
-              stopRecognition();
-            }}
+            // onLongClick={onLongClick}
+            // onLongClickEnd={onLongClickEnd}
           />
           <div className="absolute top-[-50px] right-0">
-            <ActionButton name={"listen.svg"} onClick={onEnterVoice} />
+            <ActionButton name={"voice_mode.svg"} onClick={onEnterVoice} />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
