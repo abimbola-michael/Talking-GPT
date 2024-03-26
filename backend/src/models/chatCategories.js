@@ -11,4 +11,12 @@ const categoriesSchema = new Schema({
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chats' }],
 }, { timestamps: true });
 
+categoriesSchema.methods.toJSON = function toJSON() {
+  const category = this.toObject();
+  category.id = category._id.toString();
+  delete category._id;
+  delete category.__v;
+  return category;
+};
+
 export default model('chatCategories', categoriesSchema);

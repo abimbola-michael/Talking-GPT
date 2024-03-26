@@ -1,29 +1,18 @@
 #!/usr/bin/node
 
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import passport from 'passport';
-import User from '../models/users';
+import { getUserFromRequest } from '../utils/authentication';
+import ApiError from './error';
 
-const JwtStrategy = Strategy;
-
-const JWTSecret = process.env.JWT_SECRET;
-
-const jwtOptions = {
-  secretOrKey: JWTSecret,
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-};
-
-passport.use(new JwtStrategy(jwtOptions, async (payload, done) => {
+export default async function requireAuth(req, res, next) {
   try {
-    const user = await User.findById(payload._id).exec();
+    const user = await getUserFromRequest(req);
+
     if (!user) {
-      return done(null, false);
+      return next(new ApiError(401, 'Unauthorized'));
     }
-
-    return done(null, user);
+    req.user = user;
+    return next();
   } catch (err) {
-    return done(err, false);
+    return next(err);
   }
-}));
-
-export default passport.authenticate('jwt', { session: false });
+}
