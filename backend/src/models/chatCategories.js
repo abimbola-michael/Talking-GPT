@@ -9,6 +9,7 @@ const categoriesSchema = new Schema({
     min: [2, 'expected name gt 2, got {VALUE}'],
   },
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chats' }],
+  user: { type: Schema.Types.ObjectId, ref: 'Users', required: [true, 'user is required'] },
 }, { timestamps: true });
 
 categoriesSchema.methods.toJSON = function toJSON() {
@@ -19,4 +20,4 @@ categoriesSchema.methods.toJSON = function toJSON() {
   return category;
 };
 
-export default model('chatCategories', categoriesSchema);
+export default model('ChatCategories', categoriesSchema);

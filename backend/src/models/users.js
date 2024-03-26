@@ -53,6 +53,7 @@ const userSchema = new Schema({
   googleId: {
     type: String,
   },
+  categories: [{ type: Schema.Types.ObjectId, ref: 'ChatCategories' }],
 }, { timestamps: true });
 
 userSchema.pre('save', async function beforeSave() {
@@ -65,7 +66,8 @@ userSchema.methods.toJSON = function toJSON() {
   delete obj._id;
   delete obj.password;
   delete obj.__v;
+  delete obj.categories;
   return obj;
 };
 
-export default model('users', userSchema);
+export default model('Users', userSchema);

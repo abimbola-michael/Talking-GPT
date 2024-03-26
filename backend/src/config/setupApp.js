@@ -15,6 +15,7 @@ export default function setUpApp(app) {
   app.use('/api/v1', ApiRoutes.authRoutes);
   app.use('/api/v1', ApiRoutes.userRoutes);
   app.use('/api/v1', ApiRoutes.categoryRouter);
+  app.use('/api/v1', ApiRoutes.chatRoutes);
   app.all('*', (req, res, next) => {
     errorResponse(new ApiError(httpStatusCode.NOT_FOUND, 'Not found'), req, res, next);
   });

@@ -5,7 +5,10 @@
     "name": {
       "type": "string", 
       "minLength": 2
-    } 
+    }, 
+    "user": {
+      "type": "string"
+    }
   }, 
   "required": ["name"], 
   "additionalProperties": false
