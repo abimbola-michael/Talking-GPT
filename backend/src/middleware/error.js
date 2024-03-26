@@ -1,5 +1,7 @@
 #!/usr/bin/node
 
+import { Error } from 'mongoose';
+
 /**
  * ApiError.
  *
@@ -21,10 +23,12 @@ class ApiError extends Error {
 
 export const errorResponse = (err, req, res, next) => {
   const defaultMsg = 'server error';
-
   if (err instanceof ApiError) {
-    res.status(err.code).json({ error: err.message });
+    return res.status(err.code).json({ error: err.message });
   }
-  res.status(500).json({ error: err ? err.message || err.toString() : defaultMsg });
+  if (err instanceof Error.ValidationError) {
+    return res.status(400).json({ errors: err.errors });
+  }
+  return res.status(500).json({ error: err ? err.message || err.toString() : defaultMsg });
 };
 export default ApiError;

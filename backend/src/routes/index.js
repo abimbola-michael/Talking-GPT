@@ -1,5 +1,7 @@
 #!/usr/bin/node
 
-import ApiRoutes from './ApiRoute';
+import apiRoutes from './apiRoutes';
+import authRoutes from './authRoutes';
+import userRoutes from './userRoutes';
 
-export default { ApiRoutes };
+export default { apiRoutes, authRoutes, userRoutes };

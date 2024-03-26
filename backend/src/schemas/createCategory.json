@@ -1,0 +1,13 @@
+{
+  "$id": "createCategory", 
+  "title": "create category", 
+  "properties": {
+    "name": {
+      "type": "string", 
+      "minLength": 2
+    }, 
+    "chats": {
+
+    }
+  }
+}

@@ -3,11 +3,12 @@
 import { Schema, model } from 'mongoose';
 
 const categoriesSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  name: { type: String },
+  name: {
+    type: String,
+    required: [true, 'category name is required'],
+    min: [2, 'expected name gt 2, got {VALUE}'],
+  },
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chats' }],
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
-});
+}, { timestamps: true });
 
 export default model('chatCategories', categoriesSchema);
