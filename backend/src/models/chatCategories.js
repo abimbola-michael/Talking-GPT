@@ -3,11 +3,21 @@
 import { Schema, model } from 'mongoose';
 
 const categoriesSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  name: { type: String },
+  name: {
+    type: String,
+    required: [true, 'category name is required'],
+    min: [2, 'expected name gt 2, got {VALUE}'],
+  },
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chats' }],
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
-});
+  user: { type: Schema.Types.ObjectId, ref: 'Users', required: [true, 'user is required'] },
+}, { timestamps: true });
 
-export default model('chatCategories', categoriesSchema);
+categoriesSchema.methods.toJSON = function toJSON() {
+  const category = this.toObject();
+  category.id = category._id.toString();
+  delete category._id;
+  delete category.__v;
+  return category;
+};
+
+export default model('ChatCategories', categoriesSchema);

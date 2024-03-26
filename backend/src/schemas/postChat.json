@@ -1,0 +1,21 @@
+{
+  "$id": "postChat", 
+  "type": "object", 
+  "properties": {
+    "category": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string", 
+      "enum": ["success", "failed"]
+    }
+  }, 
+  "required": ["category", "name", "message"], 
+  "additionalProperties": false
+}
