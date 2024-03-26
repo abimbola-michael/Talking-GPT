@@ -34,3 +34,8 @@ node_modules/
 # ignore .env* files 
 .env* 
 
+# exclude package-lock.json 
+package-lock.json
+
+# exclude swap files 
+*.swp
