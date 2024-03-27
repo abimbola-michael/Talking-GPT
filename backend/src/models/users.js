@@ -21,17 +21,19 @@ passwordSchema
   .spaces();
 
 const userSchema = new Schema({
-  firstName: {
+  firstname: {
     type: String,
     minLength: [2, 'Must be at least 2, got {VALUE}'],
     maxLength: [100, 'Must be at most 100, got {VALUE}'],
   },
-  lastName: {
+  lastname: {
     type: String,
     minLength: [2, 'Must be at least 2, got {VALUE}'],
     maxLength: [100, 'Must be at most 100, got {VALUE}'],
   },
-  userName: { type: String, unique: true, index: true },
+  username: {
+    type: String,
+  },
   email: {
     type: String,
     unique: true,

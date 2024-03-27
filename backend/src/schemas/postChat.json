@@ -2,13 +2,10 @@
   "$id": "postChat", 
   "type": "object", 
   "properties": {
-    "category": {
+    "prompt": {
       "type": "string"
     },
-    "name": {
-      "type": "string"
-    },
-    "message": {
+    "response": {
       "type": "string"
     },
     "status": {
@@ -16,6 +13,6 @@
       "enum": ["success", "failed"]
     }
   }, 
-  "required": ["category", "name", "message"], 
+  "required": ["prompt", "response"], 
   "additionalProperties": false
 }

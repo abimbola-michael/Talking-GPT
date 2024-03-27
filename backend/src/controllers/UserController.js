@@ -1,6 +1,8 @@
 #!/usr/bin/node
 
+import { schemaValidator } from '../config/setupSchema';
 import User from '../models/users';
+import ApiError from '../middleware/error';
 
 const hostName = process.env.API_HOST_NAME || 'http://0.0.0.0/api/v1';
 
@@ -17,11 +19,15 @@ export default class UserController {
    */
   static async postUser(req, res, next) {
     try {
+      const validate = schemaValidator.getSchema('createUser');
+      if (!validate(req.body)) {
+        return next(new ApiError(400, validate.errors[0].message));
+      }
       const user = new User(req.body);
       await user.save();
-      res.status(201).json({ data: user.toJSON() });
+      return res.status(201).json({ user: user.toJSON() });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -29,7 +35,7 @@ export default class UserController {
     const { user } = req;
 
     res.status(200).json({
-      data: user.toJSON(),
+      user: user.toJSON(),
       actions: {
         postUser: { methods: 'POST', url: `${hostName}/users` },
         postCategory: { methods: 'POST', url: `${hostName}/categories` },
