@@ -15,7 +15,7 @@ export default class AuthController {
       }
 
       if (req.query.exp) {
-        exp = Number(req.query.exp);
+        exp = (Date.now() / 1000) + Number(req.query.exp);
       }
 
       const user = await User.findOne({ email: req.body.email });
@@ -23,12 +23,12 @@ export default class AuthController {
         return next(new ApiError(401, 'Unauthorized'));
       }
 
-      if (!await verifyPassword(req.body.password, user.password)) {
+      if (!verifyPassword(req.body.password, user.password)) {
         return next(new ApiError(401, 'Unauthorized'));
       }
       const token = generateToken({ _id: user._id.toString(), exp });
 
-      return res.status(200).json({ token, actions: {} });
+      return res.status(200).json({ token, actions: {}, exp: new Date(exp * 1000) });
     } catch (err) {
       return next(err);
     }

@@ -1,0 +1,16 @@
+{
+  "$id": "updateChat", 
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    }, 
+    "response": {
+      "type": "string"
+    }, 
+    "status": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false 
+}

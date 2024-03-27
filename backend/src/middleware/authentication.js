@@ -1,6 +1,6 @@
 #!/usr/bin/node
 
-import { getUserFromRequest } from '../utils/authentication';
+import getUserFromRequest from '../utils/getUser';
 import ApiError from './error';
 
 export default async function requireAuth(req, res, next) {
