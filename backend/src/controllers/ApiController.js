@@ -1,4 +1,7 @@
 #!/usr/bin/node
+import Users from '../models/users';
+import Chats from '../models/chats';
+import Category from '../models/chatCategories';
 
 /**
  * ApiControllers.
@@ -20,8 +23,12 @@ class ApiControllers {
    * @param {request} req - express request object
    * @param {response} res - express response object
    */
-  static getStats(req, res) {
-
+  static async getStats(req, res) {
+    res.status(200).json({
+      users: await Users.countDocuments(),
+      chats: await Chats.countDocuments(),
+      categories: await Category.countDocuments(),
+    });
   }
 }
 

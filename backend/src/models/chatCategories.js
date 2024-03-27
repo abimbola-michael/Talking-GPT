@@ -1,6 +1,7 @@
 #!/usr/bin/node
 
 import { Schema, model } from 'mongoose';
+import  Chats from './chats';
 
 const categoriesSchema = new Schema({
   name: {
@@ -20,4 +21,9 @@ categoriesSchema.methods.toJSON = function toJSON() {
   return category;
 };
 
+categoriesSchema.pre('findOneAndDelete', async function remove(next) {
+  const query = this.getQuery('_id');
+  await Chats.deleteMany({ category: query._id, user: query.user });
+  next();
+});
 export default model('ChatCategories', categoriesSchema);
