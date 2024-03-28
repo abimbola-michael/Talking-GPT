@@ -31,5 +31,7 @@ module.exports = {
       'LabeledStatement',
       'WithStatement',
     ],
+    'json/*': ['error', { allowComments: true }],
   },
+  plugins: ['json'],
 };
