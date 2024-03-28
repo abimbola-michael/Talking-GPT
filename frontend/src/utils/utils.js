@@ -1,6 +1,7 @@
 import ChatOutput from "../models/chat_output";
 import CategoryGroup from "../models/category_group";
 import { symbolMap } from "./symbols";
+import Category from "../models/category";
 
 export const isDarkMode = window.matchMedia(
   "(prefers-color-scheme: dark)"
@@ -71,25 +72,29 @@ export function getCategoriesGroups(categories) {
     const catIndex = categoriesGroups.findIndex(
       (cat) => cat.title === catTitle
     );
+    const newCategory = new Category(
+      category.id,
+      category.name,
+      category.time,
+      category.chats
+    );
 
     if (catIndex === -1) {
-      categoriesGroups.push(
-        new CategoryGroup(catIndex, [category], category.time)
-      );
+      categoriesGroups.push(new CategoryGroup(catTitle, [newCategory]));
     } else {
-      categoriesGroups[catIndex].categories.push(category);
+      categoriesGroups[catIndex].categories.push(newCategory);
     }
   }
   return categoriesGroups;
 }
 
 export function getChatCategories(chats) {
-  chats.sort((a, b) => b.date - a.date);
+  chats.sort((a, b) => b.createdAt - a.createdAt);
   const categories = [];
 
   for (let i = 0; i < chats.length; i++) {
     const chat = chats[i];
-    const catTitle = getRelativeDate(new Date(chat.date));
+    const catTitle = getRelativeDate(chat.createdAt);
     const catIndex = categories.findIndex((cat) => cat.title === catTitle);
 
     if (catIndex === -1) {
@@ -256,47 +261,3 @@ export function getReadableMessages(message, prevMessages = []) {
   // return readableMessage.trim();
   return messages;
 }
-
-// export function getReadableMessage(message) {
-//   let readableMessage = "";
-//   const words = message.split(" ");
-//   for (let i = 0; i < words.length; i++) {
-//     const word = words[i];
-//     let wordMessage = "";
-//     let backTickCount = 0;
-//     let isCode = false;
-//     for (let j = 0; j < word.length; j++) {
-//       const char = word[j];
-//       if (isSymbol(char)) {
-//         if (char === "`") {
-//           if (isCode) {
-//             backTickCount--;
-//           } else {
-//             backTickCount++;
-//           }
-//           if (!isCode && backTickCount === 3) {
-//             isCode = true;
-//             wordMessage += "Beginning a Code block ";
-//           }
-//           if (isCode && backTickCount === 0) {
-//             isCode = false;
-//             wordMessage += "Ending a Code block ";
-//           }
-//           continue;
-//         }
-//         let symbolName = symbolMap[char] || "";
-//         if (symbolName === "Hyphen" && j < word.length - 1) {
-//           const nextChar = word[j + 1];
-//           if (isConvertibleToNumber(nextChar)) {
-//             symbolName = "Minus";
-//           }
-//         }
-//         wordMessage = wordMessage.trim() + ` ${symbolName} `;
-//       } else {
-//         wordMessage += char;
-//       }
-//     }
-//     readableMessage += wordMessage.trim() + " ";
-//   }
-//   return readableMessage.trim();
-// }

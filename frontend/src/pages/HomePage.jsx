@@ -9,6 +9,7 @@ import VoiceSelectView from "../components/VoiceSelectView";
 import Chat from "../models/chat";
 import {
   generateRandomString,
+  getCategoriesGroups,
   getPrompt,
   // getReadableMessage,
   getReadableMessages,
@@ -17,7 +18,13 @@ import OpenAI from "openai";
 import CategoryGroup from "../models/category_group";
 import Category from "../models/category";
 import ActionButton from "../components/ActionButton";
-import { createCategory, updateCategory } from "../services/categoryService";
+import {
+  createCategory,
+  deleteCategory,
+  updateCategory,
+} from "../services/categoryService";
+import { createChat, deleteChat } from "../services/chatService";
+import { getUser } from "../services/authService";
 const recognition = new window.webkitSpeechRecognition();
 recognition.lang = "en-US";
 
@@ -31,18 +38,14 @@ export default function HomePage() {
 
   const [selectedCategory, setSelectedCategory] = useState("General");
   const [editCategory, setEditCategory] = useState(null);
+  const [editChat, setEditChat] = useState(null);
 
-  const [categoriesGroups, setCategoriesGroups] = useState([
-    new CategoryGroup(
-      "Today",
-      [new Category("general", "General", Date.now().toString())],
-      Date.now().toString()
-    ),
-  ]);
+  const [categoriesGroups, setCategoriesGroups] = useState([]);
   const [chatAction, setChatAction] = useState({
     currentChat: null,
     action: "",
   });
+  const [user, setUser] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcriptMessage, setTranscriptMessage] = useState("");
@@ -51,17 +54,37 @@ export default function HomePage() {
   const [showVoiceSelect, setShowVoiceSelect] = useState(false);
 
   const messageRef = useRef("");
+  const categoriesRef = useRef([]);
 
   const speakMessagesRef = useRef([]);
   const speakMessageIndexRef = useRef(-1);
-  let testMessage = "Hi Michael, How may i assist you today?";
+  let testMessage = `Hi ${
+    user?.firstname ?? "Michael"
+  }, How may i assist you today?`;
 
   useEffect(() => {
     setVoices(window.speechSynthesis.getVoices());
     setVoice(window.speechSynthesis.getVoices()[0]);
   }, []);
+
   useEffect(() => {
-    
+    getUser().then((user) => {
+      setUser(user);
+      if (user.categories) {
+        categoriesRef.current = user.categories;
+        const groups = getCategoriesGroups(user.categories);
+        setCategoriesGroups(groups);
+      } else {
+        createCategory("General").then((category) => {
+          const categories = [
+            new Category(category.id, category.name, category.time),
+          ];
+          user.categories = categories;
+          categoriesRef.current = user.categories;
+          setCategoriesGroups([new CategoryGroup("Today", categories)]);
+        });
+      }
+    });
   }, []);
   //Listening
   useEffect(() => {
@@ -229,10 +252,10 @@ export default function HomePage() {
   function toggleOpened() {
     setIsOpened((isOpened) => !isOpened);
   }
-  function addChat(chat, aiChat) {
+  function addChat(chat) {
     setChats((prevChats) => {
-      const newChats = [...prevChats, chat, aiChat];
-      generateResponseFromAi(getPrompt(newChats), aiChat.id);
+      const newChats = [...prevChats, chat];
+      generateResponseFromAi(getPrompt(newChats), chat.id);
       return newChats;
     });
   }
@@ -246,11 +269,10 @@ export default function HomePage() {
     if (transcriptMessage.length > 0) {
       setTranscriptMessage("");
     }
+    createChat(selectedCategory);
     const id = generateRandomString();
-    const aiId = generateRandomString();
-    const chat = new Chat(id, "you", message, Date.now(), "success");
-    const aiChat = new Chat(aiId, "ai", "", Date.now(), "loading");
-    addChat(chat, aiChat);
+    const chat = new Chat(id, message, "", Date.now(), "success");
+    addChat(chat);
   }
   function sendChatToDatabase() {}
 
@@ -324,6 +346,9 @@ export default function HomePage() {
 
   function updateAction({ currentChat, action }) {
     //console.log("action", action, currentChat);
+    const text = !currentChat
+      ? ""
+      : `Prompt: ${currentChat.prompt}\n\nResponse: ${currentChat.response}`;
     if (action === "play") {
       if (chatAction.currentChat !== currentChat) {
         const message =
@@ -343,16 +368,31 @@ export default function HomePage() {
     } else if (action === "") {
       stopSpeaking();
     } else if (action === "regenerate") {
+      regenerateChat(currentChat);
     } else if (action === "edit") {
+      editCurrentChat(currentChat);
     } else if (action === "copy") {
+      copyToClipboard(text);
     } else if (action === "share") {
+      shareText(text);
     } else if (action === "delete") {
+      deleteChatFromCategory(currentChat);
     }
     setChatAction({ currentChat, action });
   }
+  function editCurrentChat(chat) {
+    setEditChat(chat.id);
+  }
+  function regenerateChat(chat) {}
+  function deleteChatFromCategory(chat) {
+    deleteChat(chat.id);
+    setChats((prevChats) => prevChats.filter((chat) => chat.id !== id));
+    // user.cate
+  }
+
   function stopEditingCategory() {
     if (editCategory !== null) {
-      deleteCategory("Today", "");
+      deleteChatCategory("Today", "");
       setEditCategory(null);
     }
   }
@@ -383,13 +423,14 @@ export default function HomePage() {
     );
     stopEditingCategory();
   }
-  function deleteCategory(categoryGroupTitle, categoryName) {
+  function deleteChatCategory(categoryGroupTitle, categoryId) {
+    deleteCategory(categoryId);
     setCategoriesGroups((catGroups) =>
       catGroups.map((catGroup) =>
         catGroup.title === categoryGroupTitle
           ? new CategoryGroup(
               catGroup.title,
-              catGroup.categories.filter((cat) => cat.name !== categoryName),
+              catGroup.categories.filter((cat) => cat.id !== categoryId),
               catGroup.time
             )
           : catGroup
@@ -400,7 +441,7 @@ export default function HomePage() {
     if (option === "Edit") {
       setEditCategory(categoryName);
     } else if (option === "Delete") {
-      deleteCategory(categoryGroup.title, categoryName);
+      deleteChatCategory(categoryGroup.title, categoryName);
     }
   }
 
@@ -426,11 +467,10 @@ export default function HomePage() {
     );
 
     setEditCategory("");
-    //setChats([]);
   }
   function loadChats(category) {
     setSelectedCategory(category.id);
-    setChats([]);
+    setChats(category.chats);
     closeSideView();
   }
   function searchChats(value) {
