@@ -43,4 +43,19 @@ export default class UserController {
       },
     });
   }
+
+  // static async updateUser(req, res, next) {
+  //   try {
+  //     const { user } = req;
+  //
+  //     const updateValidator = schemaValidator.getSchema('updateUser');
+  //     if (!updateValidator(req.body)) {
+  //       return next(new ApiError(400, updateValidator.errors[0].message));
+  //     }
+  //     await User.updateOne({ _id: user._id }, req.body);
+  //     const updatedUser = await User.findById(user._id).populate('categories');
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // }
 }

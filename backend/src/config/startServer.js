@@ -9,11 +9,21 @@ function startServer(api) {
   const dbHost = process.env.DB_HOST || 'localhost';
   const dbPort = process.env.DB_PORT || 27017;
   const dbName = process.env.DB_NAME || 'talking_gpt_db';
+  const dbPassword = process.env.DB_PWD;
+  const dbUser = process.env.DB_USER;
 
   try {
-    api.listen(port, host, () => {
-      mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`);
-      console.log(`[${env}] API listening on port ${port}`);
+    api.listen(port, host, async () => {
+      try {
+        let uri = `mongodb://${dbHost}:${dbPort}/${dbName}`;
+        if (env === 'DEV') {
+          uri = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.owideev.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
+        }
+        mongoose.connect(uri);
+        console.log(`[${env}] API listening on port ${port}`);
+      } catch (err) {
+        console.error(err);
+      }
     });
   } catch (err) {
     console.error(err);
