@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import httpStatusCode from "http-status-codes";
+import path from "path";
 import ApiRoutes from "../routes";
 import ApiError, { errorResponse } from "../middleware/error";
 
