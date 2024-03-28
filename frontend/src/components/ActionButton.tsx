@@ -18,14 +18,14 @@ export default function ActionButton({
   onLongClickEnd?: () => void;
   bgColor?: string;
 }) {
-  const [isLongClick, setIsLongClick] = useState(false);
+  // const [isLongClick, setIsLongClick] = useState(false);
   const longPressTimeout = useRef<number>();
   const longPress = useRef(false);
   const handleMouseDown = () => {
     // Set a timeout for the long press event
     const timeout = setTimeout(() => {
       onLongClick?.();
-      setIsLongClick(true);
+      // setIsLongClick(true);
       longPress.current = true;
       // Your long press action goes here
     }, 1000); // Adjust the duration as needed
@@ -36,7 +36,7 @@ export default function ActionButton({
   const handleMouseUp = () => {
     // Clear the timeout when button is released
     clearTimeout(longPressTimeout.current);
-    setIsLongClick(false);
+    // setIsLongClick(false);
     onLongClickEnd?.();
   };
 
@@ -49,11 +49,13 @@ export default function ActionButton({
       onMouseLeave={handleMouseUp}
       style={{
         backgroundColor: bgColor ?? tint,
-        width: isLongClick ? size + 20 : size,
-        height: isLongClick ? size + 20 : size,
+        width: size,
+        height: size,
+        // width: isLongClick ? size + 20 : size,
+        // height: isLongClick ? size + 20 : size,
       }}
     >
-      <AppIcon name={name} size={15} color={onTint} />
+      <AppIcon name={name} size={20} color={onTint} />
     </div>
   );
 }

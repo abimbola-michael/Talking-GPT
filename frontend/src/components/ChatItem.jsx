@@ -6,15 +6,17 @@ import NormalText from "./NormalText";
 import { onTint, tint } from "../colors";
 import AppIcon from "./AppIcon";
 import PopupMenu from "./PopupMenu";
-import { formatTime } from "../utils/utils";
+// import { formatTime } from "../utils/utils";
 import LoadingSignal from "./LoadingSignal";
 
 const menuOptions = ["Regenerate", "Copy", "Share", "Delete"];
 export default function ChatItem({
   chat,
-  chatAction: { currentChat, action },
+  chatAction,
   setChatAction,
+  onEnterVoice,
 }) {
+  const { currentChat, action } = chatAction;
   const { id, name, message, time, status } = chat;
   const chatOutpts = getChatOutputs(message);
   const isAi = name === "ai";
@@ -38,6 +40,9 @@ export default function ChatItem({
           : "play",
     });
   }
+  function enterVoiceMode() {
+    onEnterVoice(index);
+  }
   return (
     <li
       className="w-full flex flex-col items-stretch gap-2 px-4 md:px-6"
@@ -55,6 +60,8 @@ export default function ChatItem({
           {name}
         </span>
         <div className="inline-flex items-center gap-3">
+          <AppIcon name={"voice_mode.svg"} onClick={enterVoiceMode} />
+
           <AppIcon
             name={
               currentChat?.id === id

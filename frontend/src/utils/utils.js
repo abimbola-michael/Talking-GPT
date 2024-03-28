@@ -1,5 +1,6 @@
 import ChatOutput from "../models/chat_output";
 import CategoryGroup from "../models/category_group";
+import { symbolMap } from "./symbols";
 
 export const isDarkMode = window.matchMedia(
   "(prefers-color-scheme: dark)"
@@ -138,3 +139,164 @@ export function formatTime(milliseconds) {
 
   return timeString;
 }
+
+export function getPrompt(chats) {
+  //const extraMessage = "ai:";
+  const maxTokens = 4096;
+  let strings = [];
+  let tokenCount = 0;
+
+  for (let i = chats.length - 1; i >= 0; i--) {
+    const chat = chats[i];
+    const message = chat.message;
+    const newMessage = `${chat.name}: ${message}\n`;
+    const tokens = trimmed(newMessage.split(" "));
+
+    if (tokenCount + tokens.length > maxTokens) {
+      const remaining = tokenCount + tokens.length - maxTokens;
+      const newMessage = newMessage.slice(0, remaining).join(" ");
+      strings.push(newMessage);
+      break;
+    }
+
+    tokenCount += tokens.length;
+    strings.push(newMessage);
+  }
+
+  strings = strings.reverse();
+  const prompt = strings.join("");
+  return prompt;
+}
+
+// Function to trim array of strings
+function trimmed(tokens) {
+  return tokens.map((token) => token.trim()).filter(Boolean);
+}
+function isSymbol(character) {
+  const asciiValue = character.charCodeAt(0);
+  // Check if the ASCII value falls within the range of ASCII values reserved for symbols
+  return (
+    (asciiValue >= 32 && asciiValue <= 47) ||
+    (asciiValue >= 58 && asciiValue <= 64) ||
+    (asciiValue >= 91 && asciiValue <= 96) ||
+    (asciiValue >= 123 && asciiValue <= 126)
+  );
+}
+function isConvertibleToNumber(str) {
+  return !isNaN(parseFloat(str)) && isFinite(str);
+}
+
+export function getReadableMessages(message, prevMessages = []) {
+  let messages = prevMessages;
+  const words = message.split(" ");
+  let wordMessage =
+    prevMessages && prevMessages.length > 0
+      ? prevMessages[prevMessages.length - 1]
+      : "";
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    let backTickCount = 0;
+    let isCode = false;
+    for (let j = 0; j < word.length; j++) {
+      const char = word[j];
+      if (isSymbol(char)) {
+        if (char === "`") {
+          if (isCode) {
+            backTickCount--;
+          } else {
+            backTickCount++;
+          }
+          if (isCode && backTickCount === 0) {
+            isCode = false;
+            wordMessage += "Ending a Code block ";
+          } else if (!isCode && backTickCount === 3) {
+            isCode = true;
+            wordMessage += "Beginning a Code block ";
+          }
+          continue;
+        }
+        let symbolName = symbolMap[char] || "";
+        if (symbolName === "Hyphen") {
+          const nextChar =
+            j + 1 < word.length && word[j + 1] !== " "
+              ? word[j + 1]
+              : j + 2 < word.length && word[j + 2] !== " "
+              ? word[j + 2]
+              : "";
+          if (nextChar.length > 0 && isConvertibleToNumber(nextChar)) {
+            symbolName = "Minus";
+          }
+        } else if (
+          symbolName === "Dot" &&
+          (j == word.length - 1 ||
+            (j + 1 < word.length && isSymbol(word[j + 1])))
+        ) {
+          symbolName = "Full Stop";
+        }
+        //wordMessage = wordMessage.trim() + ` ${symbolName} `;
+        if (wordMessage.trim().length > 0) {
+          messages.push(wordMessage.trim());
+        }
+        if (symbolName.length > 0) {
+          messages.push(symbolName);
+        }
+        wordMessage = "";
+      } else {
+        wordMessage += char;
+      }
+    }
+    wordMessage += " ";
+
+    // readableMessage += wordMessage.trim() + " ";
+  }
+  messages.push(wordMessage.trim());
+
+  // if (wordMessage.trim().length > 0) {
+  // }
+  // return readableMessage.trim();
+  return messages;
+}
+
+// export function getReadableMessage(message) {
+//   let readableMessage = "";
+//   const words = message.split(" ");
+//   for (let i = 0; i < words.length; i++) {
+//     const word = words[i];
+//     let wordMessage = "";
+//     let backTickCount = 0;
+//     let isCode = false;
+//     for (let j = 0; j < word.length; j++) {
+//       const char = word[j];
+//       if (isSymbol(char)) {
+//         if (char === "`") {
+//           if (isCode) {
+//             backTickCount--;
+//           } else {
+//             backTickCount++;
+//           }
+//           if (!isCode && backTickCount === 3) {
+//             isCode = true;
+//             wordMessage += "Beginning a Code block ";
+//           }
+//           if (isCode && backTickCount === 0) {
+//             isCode = false;
+//             wordMessage += "Ending a Code block ";
+//           }
+//           continue;
+//         }
+//         let symbolName = symbolMap[char] || "";
+//         if (symbolName === "Hyphen" && j < word.length - 1) {
+//           const nextChar = word[j + 1];
+//           if (isConvertibleToNumber(nextChar)) {
+//             symbolName = "Minus";
+//           }
+//         }
+//         wordMessage = wordMessage.trim() + ` ${symbolName} `;
+//       } else {
+//         wordMessage += char;
+//       }
+//     }
+//     readableMessage += wordMessage.trim() + " ";
+//   }
+//   return readableMessage.trim();
+// }

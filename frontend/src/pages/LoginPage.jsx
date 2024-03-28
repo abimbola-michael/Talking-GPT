@@ -4,10 +4,14 @@ import LoginInput from "../components/LoginInput";
 import OpenAiLogo from "../components/OpenAiLogo";
 import OutlinedButton from "../components/OutlinedButton";
 import { onTint, tint } from "../colors";
+import { getUser } from "../services/authService";
 export default function LoginPage() {
   const navigate = useNavigate();
-  function login() {
-    navigate("/home");
+  async function login() {
+    const user = await getUser();
+    if (user) {
+      navigate("/home");
+    }
   }
   function gotoSignup() {
     navigate("/signup");
