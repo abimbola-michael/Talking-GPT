@@ -1,0 +1,26 @@
+{
+  "type": "object", 
+  "properties": {
+    "firstname": {
+      "type": "string", 
+      "minLength": 1, 
+      "maxLength": 100
+    }, 
+    "lastname": {
+      "type": "string", 
+      "minLength": 1, 
+      "maxLength": 100
+    }, 
+    "email": {
+      "type": "string", 
+      "format": "email"
+    },
+    "username": {
+      "type": "string", 
+      "minLength": 1, 
+      "maxLength": 100
+    }
+  }, 
+  "minProperties": 1, 
+  "additionalProperties": false
+}

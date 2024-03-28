@@ -9,8 +9,11 @@
       "type": "string"
     }, 
     "status": {
-      "type": "string"
+      "type": "string",
+      "enum": ["success", "failed"], 
+      "default": "success"
     }
   },
-  "additionalProperties": false 
+  "additionalProperties": false, 
+  "minProperties": 1
 }
