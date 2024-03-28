@@ -1,7 +1,12 @@
 import { useEffect, useRef } from "react";
 import ChatItem from "./ChatItem";
 
-export default function ChatList({ chats, chatAction, setChatAction }) {
+export default function ChatList({
+  chats,
+  chatAction,
+  setChatAction,
+  onEnterVoice,
+}) {
   const listRef = useRef(null);
   useEffect(() => {
     if (listRef.current) {
@@ -16,6 +21,7 @@ export default function ChatList({ chats, chatAction, setChatAction }) {
           chat={chat}
           chatAction={chatAction}
           setChatAction={setChatAction}
+          onEnterVoice={onEnterVoice}
         />
       ))}
     </ul>

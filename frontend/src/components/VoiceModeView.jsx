@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import ProfileIcon from "./ProfileIcon";
 import ActionButton from "./ActionButton";
-import { tint } from "../colors";
+import { onTint, tint } from "../colors";
+import OpenAiLogo from "./OpenAiLogo";
 const recognition = new window.webkitSpeechRecognition();
 recognition.lang = "en-US";
 
 export default function VoiceModeView({
   onChangeToChat,
   onRecord,
+  onReplay,
+  onStopPlaying,
   onTogglePlay,
   onListen,
   onSpeakNext,
@@ -15,6 +18,7 @@ export default function VoiceModeView({
   isRecording,
   isListening,
   isSpeaking,
+  chat,
 }) {
   // const [isRecording, setIsRecording] = useState(false);
   // const [message, setMessage] = useState("");
@@ -103,26 +107,48 @@ export default function VoiceModeView({
   // }
 
   return (
-    <div className="relative w-full h-full" style={{ color: tint }}>
-      <div className="flex flex-col items-center mt-[20%]">
-        <ProfileIcon
-          asset={"microsoft_icon.png"}
-          radius={70}
-          bgColor={"green"}
+    <div
+      className="relative flex flex-col items-center w-full h-full"
+      style={{ color: tint }}
+    >
+      <div className="h-[50%] w-[50%] md:w-[30%] flex flex-col items-center pt-20">
+        {!chat || chat.name === "ai" ? (
+          <OpenAiLogo color={onTint} radius={50} bgColor={tint} />
+        ) : (
+          <ProfileIcon asset={"photo.jpg"} radius={50} bgColor={"green"} />
+        )}
+        <h2 className="font-bold text-xl capitalize pt-2">
+          {chat ? chat.name : "Ai"}
+        </h2>
+        <p className="text-md text-center grow">
+          {chat ? chat.message : "Hi Michael\nHow may I assist you today?"}
+        </p>
+      </div>
+      <div className="w-full flex justify-center absolute bottom-[70px] left-0">
+        <ActionButton
+          name={isListening ? "stop.svg" : "listen.svg"}
+          onClick={onListen}
+          size={70}
         />
-        <h2 className="font-bold text-lg">You</h2>
-        <p className="text-md">{"What will you like me to help you with?"}</p>
       </div>
 
-      <div className="w-full absolute bottom-3 left-0">
-        <div className="w-full flex justify-center items-center gap-8">
-          <ActionButton
-            name={isSpeaking || isListening ? "pause.svg" : "play.svg"}
-            onClick={onTogglePlay}
-          />
+      <div className="w-full px-5 flex justify-between items-center gap-2 absolute bottom-3 left-0">
+        <div className="shrink-0">
           <ActionButton name="previous.svg" onClick={onSpeakPrev} />
+        </div>
+
+        {isSpeaking && (
+          <div className="w-full flex justify-center items-center gap-8">
+            <ActionButton
+              name={isSpeaking ? "pause.svg" : "play.svg"}
+              onClick={onTogglePlay}
+            />
+            <ActionButton name={"replay.svg"} onClick={onReplay} />
+            <ActionButton name={"stop.svg"} onClick={onStopPlaying} />
+          </div>
+        )}
+        <div className="shrink-0">
           <ActionButton name="forward.svg" onClick={onSpeakNext} />
-          <ActionButton name="listen.svg" onClick={onListen} />
         </div>
       </div>
       {/* <div className="absolute bottom-10 left-6">

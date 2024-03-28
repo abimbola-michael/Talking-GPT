@@ -1,8 +1,7 @@
 class CategoryGroup {
-  constructor(title, categories, time) {
+  constructor(title, categories) {
     this.title = title;
     this.categories = categories;
-    this.time = time;
   }
 }
 export default CategoryGroup;

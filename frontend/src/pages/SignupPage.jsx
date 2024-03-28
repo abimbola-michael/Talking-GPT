@@ -4,19 +4,37 @@ import LoginInput from "../components/LoginInput";
 import OpenAiLogo from "../components/OpenAiLogo";
 import OutlinedButton from "../components/OutlinedButton";
 import { onTint, tint } from "../colors";
+import { createUser, getUser } from "../services/authService";
+import { useRef } from "react";
+
 export default function SignupPage() {
   const navigate = useNavigate();
-  function signup() {
-    navigate("/home");
+  const emailRef = useRef("");
+  const passwordRef = useRef("");
+  const firstNameRef = useRef("");
+  const lastNameRef = useRef("");
+
+  async function signup() {
+    const result = await createUser(
+      emailRef.current,
+      passwordRef.current,
+      firstNameRef.current,
+      lastNameRef.current
+    );
+    if (result) {
+      navigate("/home");
+    }
   }
-  function gotoLogin() {
+  async function gotoLogin() {
     navigate("/login");
   }
 
   function signupWith(type) {
+    // else if (type == "apple") {
+    // } else if (type == "microsoft") {
+    // }
     if (type == "google") {
-    } else if (type == "apple") {
-    } else if (type == "microsoft") {
+    } else {
     }
   }
   return (
@@ -28,7 +46,31 @@ export default function SignupPage() {
         <OpenAiLogo color={onTint} />
       </div>
       <p className="font-bold text-3xl pt-[150px]">Create your account</p>
-      <LoginInput placeholder={"Email Address"} />
+      <LoginInput
+        placeholder={"Email"}
+        onChange={(val) => {
+          emailRef.current = val;
+        }}
+      />
+      <LoginInput
+        placeholder={"First Name"}
+        onChange={(val) => {
+          firstNameRef.current = val;
+        }}
+      />
+      <LoginInput
+        placeholder={"Last Name"}
+        onChange={(val) => {
+          lastNameRef.current = val;
+        }}
+      />
+      <LoginInput
+        placeholder={"Password"}
+        onChange={(val) => {
+          passwordRef.current = val;
+        }}
+      />
+
       <LoginButton title={"Continue"} onClick={signup} />
       <p className="text-sm">
         {"Already have an account?"}{" "}
@@ -47,7 +89,7 @@ export default function SignupPage() {
           icon={"google_icon.png"}
           onClick={() => signupWith("google")}
         />
-        <OutlinedButton
+        {/* <OutlinedButton
           title={"Continue with Microsoft Account"}
           icon={"microsoft_icon.png"}
           onClick={() => signupWith("microsoft")}
@@ -56,7 +98,7 @@ export default function SignupPage() {
           title={"Continue with Apple Account"}
           icon={"apple_icon.png"}
           onClick={() => signupWith("apple")}
-        />
+        /> */}
       </div>
     </div>
   );

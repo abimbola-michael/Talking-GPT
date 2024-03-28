@@ -17,7 +17,7 @@ export default function CategoryItem({
       className="flex justify-between items-center hover:bg-lightest-tint hover:rounded-sm text-white py-1 cursor-pointer"
       onClick={() => onCategoryClick(category)}
     >
-      {editCategory === name ? (
+      {editCategory === id ? (
         <CategoryInput
           initialValue={name}
           placeholder={"Write Category..."}
@@ -27,18 +27,18 @@ export default function CategoryItem({
         <p
           className="text-sm"
           style={{
-            color: selectedCategory === name ? "green" : null,
+            color: selectedCategory === id ? "green" : null,
           }}
         >
           {name}
         </p>
       )}
-      {name !== "General" && editCategory !== name && (
+      {name !== "General" && editCategory !== id && (
         <PopupMenuButton
           size={20}
           color={"white"}
           menuOptions={options}
-          onOptionClick={(option) => onOptionClick(categoryGroup, name, option)}
+          onOptionClick={(option) => onOptionClick(categoryGroup, id, option)}
         />
       )}
     </li>

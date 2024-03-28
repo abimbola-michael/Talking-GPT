@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "css-filter-converter": "^1.0.109",
     "openai": "^4.28.4",
     "prismjs": "^1.29.0",

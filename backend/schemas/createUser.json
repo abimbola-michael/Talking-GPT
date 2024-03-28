@@ -1,5 +1,5 @@
 {
-  "$id": "createUser", 
+  "$id": "createUser",
   "type": "object",
   "properties": {
     "username": {
@@ -16,7 +16,7 @@
     "email": {
       "type": "string",
       "format": "email"
-    }, 
+    },
     "firstname": {
       "type": "string",
       "minLength": 1,
@@ -27,7 +27,7 @@
       "minLength": 1,
       "maxLength": 100
     }
-  }, 
-  "required": ["password", "email", "firstname", "lastname"], 
+  },
+  "required": ["password", "email", "firstname", "lastname"],
   "additionalProperties": false
 }

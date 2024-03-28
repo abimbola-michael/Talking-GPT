@@ -18,4 +18,5 @@ export const tintLightest = isDarkMode ? lightestWhite : lightestBlack;
 export const onTint = isDarkMode ? black : white;
 
 export const appBgColor = isDarkMode ? "#121212" : "#ffffff";
-export const primaryColor = "#ff4500";
+//export const primaryColor = "#ff4500";
+export const primaryColor = "green";
