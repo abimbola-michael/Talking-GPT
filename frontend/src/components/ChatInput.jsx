@@ -13,7 +13,7 @@ export default function ChatInput({
   onListen,
   isListening,
 }) {
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState("");
   const inputRef = useRef(null);
 
   useEffect(() => {

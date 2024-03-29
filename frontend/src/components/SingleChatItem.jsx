@@ -5,34 +5,40 @@ import CodeText from "./CodeText";
 import NormalText from "./NormalText";
 import { onTint, tint } from "../colors";
 import AppIcon from "./AppIcon";
-import PopupMenu from "./PopupMenu";
 // import { formatTime } from "../utils/utils";
 import LoadingSignal from "./LoadingSignal";
 import { useState } from "react";
 import PopupMenuButton from "./PopupMenuButton";
+import ChatOutput from "../models/chat_output";
 
 const menuOptions = ["Regenerate", "Edit", "Copy", "Share", "Delete"];
 export default function SingleChatItem({
   name,
-  prompt,
-  response,
-  status,
-  chatOutputs,
+  chat,
   chatAction,
   setChatAction,
   onEnterVoice,
 }) {
   const [isEdit, setIsEdit] = useState(false);
-  const { currentChat, action } = chatAction;
+  const { currentChat, action, currentIsAi } = chatAction;
   const isAi = name === "ai";
+  const { id, prompt, response, time, status } = chat;
+  const chatOutputs = isAi
+    ? getChatOutputs(response)
+    : [new ChatOutput(0, prompt, false)];
+
   function onReplay() {
-    setChatAction({ currentChat: chat, action: "replay" });
+    setChatAction({ currentChat: chat, action: "replay", isAi: isAi });
   }
   function onStopPlaying() {
-    setChatAction({ currentChat: null, action: "" });
+    setChatAction({ currentChat: null, action: "", isAi: isAi });
   }
   function onOptionClick(option) {
-    setChatAction({ currentChat: chat, action: option.toLowerCase() });
+    setChatAction({
+      currentChat: chat,
+      action: option.toLowerCase(),
+      isAi: isAi,
+    });
   }
   function executeOptions(option) {
     const text = !currentChat
@@ -82,16 +88,14 @@ export default function SingleChatItem({
             ? "pause"
             : "play"
           : "play",
+      isAi: isAi,
     });
   }
   function enterVoiceMode() {
     onEnterVoice(index);
   }
   return (
-    <li
-      className="w-full flex flex-col items-stretch gap-2 px-4 md:px-6"
-      style={{ color: tint }}
-    >
+    <li className="flex flex-col gap-2 px-4 md:px-6" style={{ color: tint }}>
       <div className="flex items-center gap-2">
         <div className="shrink-0 pt-1">
           {isAi ? (
@@ -108,7 +112,8 @@ export default function SingleChatItem({
 
           <AppIcon
             name={
-              currentChat?.id === id
+              currentChat?.id === id &&
+              ((currentIsAi && isAi) || (!currentIsAi && !isAi))
                 ? action === "play" || action === "replay"
                   ? "pause.svg"
                   : "play.svg"
@@ -116,12 +121,14 @@ export default function SingleChatItem({
             }
             onClick={togglePlay}
           />
-          {currentChat?.id === id && (
-            <AppIcon name={"restart.svg"} onClick={onReplay} />
-          )}
-          {currentChat?.id === id && (
-            <AppIcon name={"stop.svg"} onClick={onStopPlaying} />
-          )}
+          {currentChat?.id === id &&
+            ((currentIsAi && isAi) || (!currentIsAi && !isAi)) && (
+              <AppIcon name={"restart.svg"} onClick={onReplay} />
+            )}
+          {currentChat?.id === id &&
+            ((currentIsAi && isAi) || (!currentIsAi && !isAi)) && (
+              <AppIcon name={"stop.svg"} onClick={onStopPlaying} />
+            )}
 
           {!isAi && (
             <PopupMenuButton

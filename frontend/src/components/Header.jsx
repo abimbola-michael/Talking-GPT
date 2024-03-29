@@ -14,7 +14,7 @@ export default function Header({
   setOpened,
 }) {
   return (
-    <div className="relative w-full flex justify-between items-center px-4 py-2 h-14">
+    <div className="relative w-full flex justify-between items-center px-4 py-2 h-20">
       <AppIcon
         name={opened ? "close.svg" : "drawer_menu.svg"}
         size={24}
@@ -39,13 +39,13 @@ export default function Header({
           size={24}
           onClick={() => selectVoice(true)}
         />
-        <div className={mode === "chat" ? "visible" : "invisible"}>
+        {/* <div className={mode === "chat" ? "visible" : "invisible"}>
           <AppIcon
             name={searching ? "close.svg" : "search.svg"}
             size={24}
             onClick={toggleSearch}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

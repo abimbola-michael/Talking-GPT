@@ -8,31 +8,21 @@ export default function ChatItem({
   setChatAction,
   onEnterVoice,
 }) {
-  const { id, prompt, response, time, status } = chat;
-  const promptChatOutput = [new ChatOutput(0, prompt, false)];
-  const responseChatOutpts = getChatOutputs(response);
-
   return (
-    <div className="w-full flex flex-col items-stretch gap-2 px-4 md:px-6">
+    <div className="w-full flex flex-col gap-2 px-4 md:px-6">
       <SingleChatItem
         name={"you"}
-        status={status}
-        chatOutputs={promptChatOutput}
+        chat={chat}
         chatAction={chatAction}
         setChatAction={setChatAction}
         onEnterVoice={onEnterVoice}
-        prompt={prompt}
-        response={response}
       />
       <SingleChatItem
         name={"ai"}
-        status={status}
-        chatOutputs={responseChatOutpts}
+        chat={chat}
         chatAction={chatAction}
         setChatAction={setChatAction}
         onEnterVoice={onEnterVoice}
-        prompt={prompt}
-        response={response}
       />
     </div>
   );

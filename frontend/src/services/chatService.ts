@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/v1/";
+//const BASE_URL = "http://localhost:5000/api/v1/";
+const BASE_URL = "https://talking-gpt-1.onrender.com/api/v1/";
+
 axios.defaults.baseURL = BASE_URL;
 
 export async function createChat(

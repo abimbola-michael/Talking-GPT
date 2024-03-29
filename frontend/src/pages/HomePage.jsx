@@ -38,12 +38,12 @@ export default function HomePage() {
 
   const [selectedCategory, setSelectedCategory] = useState("General");
   const [editCategory, setEditCategory] = useState(null);
-  const [editChat, setEditChat] = useState(null);
 
   const [categoriesGroups, setCategoriesGroups] = useState([]);
   const [chatAction, setChatAction] = useState({
     currentChat: null,
     action: "",
+    isAi: false,
   });
   const [user, setUser] = useState(null);
   const [isListening, setIsListening] = useState(false);
@@ -95,13 +95,14 @@ export default function HomePage() {
       if (isSpeaking) {
         stopSpeaking();
       }
+      console.log("listening");
     };
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       if (transcript.length > 0) {
         const fullMessage = messageRef.current + " " + transcript;
-        //console.log("message", transcript);
+        console.log("message", transcript);
         setTranscriptMessage(fullMessage);
         messageRef.current = fullMessage;
       }
@@ -110,6 +111,8 @@ export default function HomePage() {
       if (isListening) {
         setIsListening(false);
       }
+      console.log("listening stopped");
+
       // if (mode === "voice" && transcriptMessage.length > 0) {
       //   sendMessage(transcriptMessage);
       // }
@@ -135,8 +138,22 @@ export default function HomePage() {
   function speakVoiceTestMessage(voice) {
     speakSynthesisMessage(testMessage, voice);
   }
-  function speak(message) {
+  function speak(message, restart) {
     const readableMessages = getReadableMessages(message);
+    if (
+      readableMessages.length > 0 &&
+      readableMessages[readableMessages.length - 1].trim().length === 0
+    ) {
+      readableMessages.pop();
+    }
+    // for (let i = 0; i < readableMessages.length; i++) {
+    //   const message = readableMessages;
+    //   speakMessagesRef.current.push(message);
+    // }
+    // if (speakMessagesRef.current.length === 0 || restart) {
+    //   speakMessageIndexRef.current = 0;
+    // }
+
     speakMessagesRef.current = readableMessages;
     speakMessageIndexRef.current = 0;
     speakSynthesisMessage(readableMessages[speakMessageIndexRef.current]);
@@ -163,11 +180,20 @@ export default function HomePage() {
       }
     };
     utterance.onend = () => {
+      console.log(
+        "lengt",
+        speakMessageIndexRef.current,
+        "message",
+        speakMessagesRef.current[speakMessageIndexRef.current],
+        "mwssages",
+        speakMessagesRef.current.length
+      );
       if (
         speakMessageIndexRef.current ===
         speakMessagesRef.current.length - 1
       ) {
-        setChatAction({ currentChat: null, action: "" });
+        setChatAction({ currentChat: null, action: "", isAi: false });
+        speakMessagesRef.current = [];
       }
       if (speakMessageIndexRef.current < speakMessagesRef.current.length) {
         speakMessageIndexRef.current++;
@@ -255,7 +281,9 @@ export default function HomePage() {
   function addChat(chat) {
     setChats((prevChats) => {
       const newChats = [...prevChats, chat];
-      generateResponseFromAi(getPrompt(newChats), chat.id);
+      const promptMessage = getPrompt(newChats);
+      console.log("promptMessage", promptMessage);
+      generateResponseFromAi(promptMessage, chat.id);
       return newChats;
     });
   }
@@ -271,10 +299,10 @@ export default function HomePage() {
     }
     createChat(selectedCategory);
     const id = generateRandomString();
+    //const id = "";
     const chat = new Chat(id, message, "", Date.now(), "success");
     addChat(chat);
   }
-  function sendChatToDatabase() {}
 
   async function generateResponseFromAi(message, id) {
     const apiKey = import.meta.env.VITE_OPEN_API_KEY;
@@ -300,9 +328,9 @@ export default function HomePage() {
           chats.map((chat) =>
             chat.id === id
               ? new Chat(
-                  chat.id,
-                  chat.name,
-                  chat.message + res,
+                  id,
+                  chat.prompt,
+                  chat.response + res,
                   Date.now(),
                   "loading"
                 )
@@ -321,10 +349,11 @@ export default function HomePage() {
       setChats((chats) =>
         chats.map((chat) =>
           chat.id === id
-            ? new Chat(chat.id, chat.name, chat.message, Date.now(), "success")
+            ? new Chat(id, chat.prompt, chat.response, Date.now(), "success")
             : chat
         )
       );
+
       if (mode === "voice") {
         if (speakMessagesRef.current.length === 1) {
           speak(speakMessagesRef.current[0]);
@@ -334,27 +363,27 @@ export default function HomePage() {
       setChats((chats) =>
         chats.map((chat) =>
           chat.id === id
-            ? new Chat(chat.id, chat.name, e.message, Date.now(), "failed")
+            ? new Chat(id, chat.prompt, e.message, Date.now(), "failed")
             : chat
         )
       );
+
       if (mode === "voice") {
         speak(e.message);
       }
     }
   }
 
-  function updateAction({ currentChat, action }) {
+  function updateAction({ currentChat, action, isAi }) {
     //console.log("action", action, currentChat);
     const text = !currentChat
       ? ""
       : `Prompt: ${currentChat.prompt}\n\nResponse: ${currentChat.response}`;
     if (action === "play") {
       if (chatAction.currentChat !== currentChat) {
-        const message =
-          currentChat.name === "ai"
-            ? `I replied ${currentChat.message}`
-            : `You said ${currentChat.message}`;
+        const message = isAi
+          ? `I replied ${currentChat.response}`
+          : `You said ${currentChat.prompt}`;
 
         speak(message);
       } else {
@@ -378,11 +407,9 @@ export default function HomePage() {
     } else if (action === "delete") {
       deleteChatFromCategory(currentChat);
     }
-    setChatAction({ currentChat, action });
+    setChatAction({ currentChat, action, isAi: false });
   }
-  function editCurrentChat(chat) {
-    setEditChat(chat.id);
-  }
+  function editCurrentChat(chat) {}
   function regenerateChat(chat) {}
   function deleteChatFromCategory(chat) {
     deleteChat(chat.id);
@@ -600,8 +627,8 @@ export default function HomePage() {
             }
           />
         ) : (
-          <div className="w-full h-full flex flex-col">
-            <div className="grow overflow-y-auto">
+          <div className="w-full h-full grow flex flex-col">
+            <div className="grow overflow-y-auto overflow-x-hidden">
               {chats.length > 0 ? (
                 <ChatList
                   chats={searchedchats.length > 0 ? searchedchats : chats}
@@ -613,16 +640,18 @@ export default function HomePage() {
                 <NewChatView />
               )}
             </div>
-            <ChatInput
-              initialValue={transcriptMessage}
-              onChange={updateMessage}
-              onSend={sendMessage}
-              onListen={toggleListen}
-              isListening={isListening}
-              // onEnterVoice={() => toggleMode("voice")}
-              // onLongClick={startListening}
-              // onLongClickEnd={stopListening}
-            />
+            <div className="shrink-0 py-4">
+              <ChatInput
+                initialValue={transcriptMessage}
+                onChange={updateMessage}
+                onSend={sendMessage}
+                onListen={toggleListen}
+                isListening={isListening}
+                // onEnterVoice={() => toggleMode("voice")}
+                // onLongClick={startListening}
+                // onLongClickEnd={stopListening}
+              />
+            </div>
           </div>
         )}
         <div className="absolute bottom-[70px] right-5 z-3">
