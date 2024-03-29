@@ -30,6 +30,16 @@ class ApiControllers {
       categories: await Category.countDocuments(),
     });
   }
+
+  /**
+   * getIp.
+   *
+   * @param {} req
+   * @param {} res
+   */
+  static getIp(req, res) {
+    return res.send(req.headers['x-forwarded-for']);
+  }
 }
 
 export default ApiControllers;

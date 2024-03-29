@@ -16,7 +16,7 @@ function startServer(api) {
     api.listen(port, host, async () => {
       try {
         let uri = `mongodb://${dbHost}:${dbPort}/${dbName}`;
-        if (env === 'DEV') {
+        if (env !== 'DEV') {
           uri = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.owideev.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
         }
         mongoose.connect(uri);
