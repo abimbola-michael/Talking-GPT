@@ -17,10 +17,18 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
+const corsOptions = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credential: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 200,
+};
+
 export default function setUpApp(app) {
   app.set('trust proxy', 1);
   app.use(limiter);
-  app.options('*', cors());
+  app.use(cors(corsOptions));
   app.use(logger);
   app.use(express.json());
   app.use('/api/v1', ApiRoutes.apiRoutes);
