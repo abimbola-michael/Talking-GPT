@@ -24,9 +24,9 @@ const corsOptions = {
 };
 
 export default function setUpApp(app) {
+  app.use(cors(corsOptions));
   app.set('trust proxy', 1);
   app.use(limiter);
-  app.use(cors(corsOptions));
   app.use(logger);
   app.use(express.json());
   app.use('/api/v1', ApiRoutes.apiRoutes);
