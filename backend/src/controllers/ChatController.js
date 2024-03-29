@@ -115,8 +115,12 @@ export default class ChatController {
       }
 
       const chat = await Chat.findOneAndUpdate({ _id: id, user: user._id }, req.body);
+      if (!chat) {
+        return next(new ApiError(404, 'Chat not found'));
+      }
+      const updatedChat = await Chat.findById(id).exec();
       return res.status(200).json({
-        chat: chat.toJSON(),
+        chat: updatedChat.toJSON(),
         actions: {
           getChat: { method: 'GET', url: `${hostname}/chats/${chat._id.toString()}` },
           deleteChat: { method: 'DELETE', url: `${hostname}/chats/${chat._id.toString()}` },
