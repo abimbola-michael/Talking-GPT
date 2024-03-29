@@ -7,6 +7,7 @@ import requireAuth from '../middleware/authentication';
 const chatRoutes = Router();
 
 chatRoutes.post('/categories/:id/chats', requireAuth, ChatController.postChat);
+chatRoutes.get('/categories/:id/chats', requireAuth, ChatController.getCategoryChats);
 chatRoutes.get('/chats/:id', requireAuth, ChatController.getChat);
 chatRoutes.put('/chat/:id', requireAuth, ChatController.updateChat);
 chatRoutes.delete('/chat/:id', requireAuth, ChatController.deleteChat);

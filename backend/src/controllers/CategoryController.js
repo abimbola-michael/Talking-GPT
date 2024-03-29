@@ -22,10 +22,10 @@ export default class CategoryController {
       const { user } = req;
 
       const validateCategory = schemaValidator.getSchema('createCategory');
-      req.body.user = user._id.toString();
       if (!validateCategory(req.body)) {
         return next(new ApiError(400, validateCategory.errors[0].message));
       }
+      req.body.user = user._id.toString();
       const category = new Category(req.body);
       await category.save();
 
@@ -34,7 +34,10 @@ export default class CategoryController {
       return res.status(201).json({
         category: category.toJSON(),
         actions: {
-
+          getCategories: { methods: 'GET', url: `${hostname}/categories` },
+          updateCategory: { methods: 'PUT', url: `${hostname}/categories/${category._id}` },
+          deleteCategory: { methods: 'DELETE', url: `${hostname}/categories/${category._id}` },
+          getCategoryChats: { methods: 'GET', url: `${hostname}/categories/${category._id}/chats` },
         },
       });
     } catch (err) {
@@ -71,7 +74,7 @@ export default class CategoryController {
         .sort({ [sort]: order })
         .exec();
       return res.status(200).json({
-        data: categories.map((category) => category.toJSON()),
+        categories: categories.map((category) => category.toJSON()),
         pagination: {
           limit: parseInt(limit, 10),
           before,
@@ -104,6 +107,7 @@ export default class CategoryController {
       return res.status(200).json({
         category: category.toJSON(),
         actions: {
+          getCategories: { methods: 'GET', url: `${hostname}/categories` },
           deleteCategory: { methods: 'DELETE', url: `${hostname}/categories/${category._id}` },
           updateCategory: { methods: 'PUT', url: `${hostname}/categories/${category._id}` },
           getCategoryChats: { methods: 'GET', url: `${hostname}/categories/${category._id}/chats` },

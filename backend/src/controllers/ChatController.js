@@ -126,4 +126,17 @@ export default class ChatController {
       return next(err);
     }
   }
+
+  static async getCategoryChats(req, res) {
+    const { user } = req;
+    const { id } = req.params;
+
+    const chats = await Chat.find({ user: user._id, category: id }).exec();
+    return res.status(200).json({
+      chats: chats.map((c) => c.toJSON()),
+      actions: {
+        postChat: { method: 'POST', url: `${hostname}/chats/${id}` },
+      },
+    });
+  }
 }
