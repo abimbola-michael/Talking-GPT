@@ -25,7 +25,16 @@ export default class UserController {
       }
       const user = new User(req.body);
       await user.save();
-      return res.status(201).json({ user: user.toJSON() });
+      return res.status(201).json({
+        user: user.toJSON(),
+        actions: {
+          postUpdate: { methods: 'PUT', url: `${hostName}/users` },
+          postCategory: { methods: 'POST', url: `${hostName}/categories/` },
+          deleteUser: { methods: 'DELETE', url: `${hostName}/users` },
+          getUser: { methods: 'GET', url: `${hostName}/users` },
+          genToken: { methods: 'POST', url: `${hostName}/login` },
+        },
+      });
     } catch (err) {
       return next(err);
     }
@@ -38,14 +47,16 @@ export default class UserController {
    * @param {} res
    */
   static async getUser(req, res) {
-    const { user } = req;
+    let { user } = req;
+
+    user = await User.findById(user._id).populate('categories');
 
     res.status(200).json({
       user: user.toJSON(),
       actions: {
         postUser: { methods: 'POST', url: `${hostName}/users` },
         postCategory: { methods: 'POST', url: `${hostName}/categories` },
-        postChat: { methods: 'POST', url: `${hostName}/chats` },
+        deleteUser: { methods: 'DELETE', url: `${hostName}/users` },
       },
     });
   }
@@ -67,7 +78,15 @@ export default class UserController {
       }
       await User.updateOne({ _id: user._id }, req.body);
       const updatedUser = await User.findById(user._id).populate('categories');
-      return res.status(200).json(updatedUser.toJSON());
+      return res.status(200).json({
+        user: updatedUser.toJSON(),
+        actions: {
+          postUpdate: { methods: 'PUT', url: `${hostName}/users` },
+          postCategory: { methods: 'POST', url: `${hostName}/categories/` },
+          deleteUser: { methods: 'DELETE', url: `${hostName}/users` },
+          getUser: { methods: 'GET', url: `${hostName}/users` },
+        },
+      });
     } catch (err) {
       return next(err);
     }
@@ -84,7 +103,7 @@ export default class UserController {
     try {
       const { user } = req;
 
-      await User.deleteOne({ _id: user._id });
+      await User.findOneAndDelete({ _id: user._id });
       return res.status(204).end();
     } catch (err) {
       return next(err);

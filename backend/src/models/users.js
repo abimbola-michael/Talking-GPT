@@ -68,13 +68,19 @@ userSchema.pre('save', async function beforeSave() {
   this.password = await hashPassword(this.password);
 });
 
+userSchema.pre('deleteOne', async function beforeDelete(doc) {
+  for await (const category of doc.categories) {
+    await this.model('Chats').deleteMany({ category: category._id });
+    await this.model('ChatCategories').deleteOne({ _id: category._id });
+  }
+}, { document: true, query: false });
+
 userSchema.methods.toJSON = function toJSON() {
   const obj = this.toObject();
   obj.id = obj._id;
   delete obj._id;
   delete obj.password;
   delete obj.__v;
-  delete obj.categories;
   return obj;
 };
 
