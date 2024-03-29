@@ -14,7 +14,7 @@ export default function ChatList({
     }
   }, [chats]);
   return (
-    <ul className="flex flex-col items-start gap-2 py-3" ref={listRef}>
+    <ul className="w-full flex flex-col items-start gap-2 py-3" ref={listRef}>
       {chats?.map((chat) => (
         <ChatItem
           key={chat.id}

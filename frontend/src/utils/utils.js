@@ -153,22 +153,34 @@ export function getPrompt(chats) {
 
   for (let i = chats.length - 1; i >= 0; i--) {
     const chat = chats[i];
-    const message = chat.message;
-    const newMessage = `${chat.name}: ${message}\n`;
-    const tokens = trimmed(newMessage.split(" "));
+    const prompt = chat.prompt;
+    const response = chat.response;
 
+    const newPrompt = `${prompt}\n`;
+    const newResponse = `${response}\n`;
+
+    let tokens = trimmed(newPrompt.split(" "));
     if (tokenCount + tokens.length > maxTokens) {
       const remaining = tokenCount + tokens.length - maxTokens;
-      const newMessage = newMessage.slice(0, remaining).join(" ");
-      strings.push(newMessage);
+      const newPrompt = newPrompt.slice(0, remaining).join(" ");
+      strings.push(newPrompt);
       break;
     }
-
     tokenCount += tokens.length;
-    strings.push(newMessage);
+    strings.push(newPrompt);
+
+    tokens = trimmed(newResponse.split(" "));
+    if (tokenCount + tokens.length > maxTokens) {
+      const remaining = tokenCount + tokens.length - maxTokens;
+      const newResponse = newPrompt.slice(0, remaining).join(" ");
+      strings.push(newResponse);
+      break;
+    }
+    tokenCount += tokens.length;
+    strings.push(newResponse);
   }
 
-  strings = strings.reverse();
+  // strings = strings.reverse();
   const prompt = strings.join("");
   return prompt;
 }
@@ -239,6 +251,16 @@ export function getReadableMessages(message, prevMessages = []) {
           symbolName = "Full Stop";
         }
         //wordMessage = wordMessage.trim() + ` ${symbolName} `;
+        if (
+          char === "'" &&
+          j - 1 >= 0 &&
+          word[j - 1] !== " " &&
+          j + 1 <= word.length - 1 &&
+          word[j + 1] !== " "
+        ) {
+          wordMessage += char;
+          continue;
+        }
         if (wordMessage.trim().length > 0) {
           messages.push(wordMessage.trim());
         }

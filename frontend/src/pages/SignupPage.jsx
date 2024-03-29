@@ -83,13 +83,13 @@ export default function SignupPage() {
         <span className="text-sm">OR</span>
         <hr className="grow bg-lighter-tint" />
       </div>
-      <div className="w-full flex flex-col gap-2 pb-[150px]">
+      {/* <div className="w-full flex flex-col gap-2 pb-[150px]">
         <OutlinedButton
           title={"Continue with Google"}
           icon={"google_icon.png"}
           onClick={() => signupWith("google")}
         />
-        {/* <OutlinedButton
+        <OutlinedButton
           title={"Continue with Microsoft Account"}
           icon={"microsoft_icon.png"}
           onClick={() => signupWith("microsoft")}
@@ -98,8 +98,8 @@ export default function SignupPage() {
           title={"Continue with Apple Account"}
           icon={"apple_icon.png"}
           onClick={() => signupWith("apple")}
-        /> */}
-      </div>
+        />
+      </div> */}
     </div>
   );
 }
