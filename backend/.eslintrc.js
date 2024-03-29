@@ -33,5 +33,4 @@ module.exports = {
     ],
     'json/*': ['error', { allowComments: true }],
   },
-  plugins: ['json'],
 };

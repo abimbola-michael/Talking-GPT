@@ -31,6 +31,12 @@ export default class UserController {
     }
   }
 
+  /**
+   * getUser.
+   *
+   * @param {} req
+   * @param {} res
+   */
   static async getUser(req, res) {
     const { user } = req;
 
@@ -44,18 +50,44 @@ export default class UserController {
     });
   }
 
-  // static async updateUser(req, res, next) {
-  //   try {
-  //     const { user } = req;
-  //
-  //     const updateValidator = schemaValidator.getSchema('updateUser');
-  //     if (!updateValidator(req.body)) {
-  //       return next(new ApiError(400, updateValidator.errors[0].message));
-  //     }
-  //     await User.updateOne({ _id: user._id }, req.body);
-  //     const updatedUser = await User.findById(user._id).populate('categories');
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // }
+  /**
+   * updateUser.
+   *
+   * @param {} req
+   * @param {} res
+   * @param {} next
+   */
+  static async updateUser(req, res, next) {
+    try {
+      const { user } = req;
+
+      const updateValidator = schemaValidator.getSchema('updateUser');
+      if (!updateValidator(req.body)) {
+        return next(new ApiError(400, updateValidator.errors[0].message));
+      }
+      await User.updateOne({ _id: user._id }, req.body);
+      const updatedUser = await User.findById(user._id).populate('categories');
+      return res.status(200).json(updatedUser.toJSON());
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  /**
+   * deleteUser.
+   *
+   * @param {} req
+   * @param {} res
+   * @param {} next
+   */
+  static async deleteUser(req, res, next) {
+    try {
+      const { user } = req;
+
+      await User.deleteOne({ _id: user._id });
+      return res.status(204).end();
+    } catch (err) {
+      return next(err);
+    }
+  }
 }

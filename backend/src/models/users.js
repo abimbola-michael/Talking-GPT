@@ -1,9 +1,9 @@
 #!/usr/bin/node
 
-import { Schema, model } from "mongoose";
-import validator from "validator";
-import PasswordValidator from "password-validator";
-import hashPassword from "../utils/authentication";
+import { Schema, model } from 'mongoose';
+import validator from 'validator';
+import PasswordValidator from 'password-validator';
+import hashPassword from '../utils/authentication';
 
 const passwordSchema = new PasswordValidator();
 
@@ -26,17 +26,17 @@ const userSchema = new Schema(
   {
     firstname: {
       type: String,
-      minLength: [2, "Must be at least 2, got {VALUE}"],
-      maxLength: [100, "Must be at most 100, got {VALUE}"],
+      minLength: [2, 'Must be at least 2, got {VALUE}'],
+      maxLength: [100, 'Must be at most 100, got {VALUE}'],
     },
     lastname: {
       type: String,
-      minLength: [2, "Must be at least 2, got {VALUE}"],
-      maxLength: [100, "Must be at most 100, got {VALUE}"],
+      minLength: [2, 'Must be at least 2, got {VALUE}'],
+      maxLength: [100, 'Must be at most 100, got {VALUE}'],
     },
-    // username: {
-    //   type: String,
-    // },
+    username: {
+      type: String,
+    },
     email: {
       type: String,
       unique: true,
@@ -45,26 +45,26 @@ const userSchema = new Schema(
         validator: (v) => validator.isEmail(v),
         message: (props) => `expect email, got ${props.value}`,
       },
-      required: [true, "email is required"],
+      required: [true, 'email is required'],
     },
     password: {
       type: String,
       validate: {
         validator: (v) => passwordSchema.validate(v),
         message:
-          "password must include uppercase, digits, symbols and no spaces",
+          'password must include uppercase, digits, symbols and no spaces',
       },
-      required: [true, "user password required"],
+      required: [true, 'user password required'],
     },
     googleId: {
       type: String,
     },
-    categories: [{ type: Schema.Types.ObjectId, ref: "ChatCategories" }],
+    categories: [{ type: Schema.Types.ObjectId, ref: 'ChatCategories' }],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-userSchema.pre("save", async function beforeSave() {
+userSchema.pre('save', async function beforeSave() {
   this.password = await hashPassword(this.password);
 });
 
@@ -78,4 +78,4 @@ userSchema.methods.toJSON = function toJSON() {
   return obj;
 };
 
-export default model("Users", userSchema);
+export default model('Users', userSchema);

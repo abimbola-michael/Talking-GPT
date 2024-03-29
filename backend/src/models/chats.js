@@ -1,8 +1,6 @@
 #!/usr/bin/node
 
 import { Schema, model } from 'mongoose';
-import Category from './chatCategories';
-import User from './users';
 
 const chatSchema = new Schema({
   user: {
@@ -42,10 +40,10 @@ chatSchema.post('findOneAndDelete', async (doc, next) => {
     const user = await this.model('Users').findById(doc.user).exec();
 
     if (category && !category.chats.length) {
-      await Category.deleteOne({ _id: doc.category });
+      await this.model('ChatCategories').deleteOne({ _id: doc.category });
     }
     if (user) {
-      await User.updateOne({ _id: doc.user }, { $pull: { chats: doc._id } });
+      await this.model('Users').updateOne({ _id: doc.user }, { $pull: { chats: doc._id } });
     }
     return next();
   } catch (err) {
