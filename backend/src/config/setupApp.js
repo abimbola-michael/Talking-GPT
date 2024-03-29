@@ -18,7 +18,7 @@ const limiter = rateLimit({
 });
 
 export default function setUpApp(app) {
-  app.set('trust proxy', 1);
+  app.set('trust proxy', 2);
   app.use(limiter);
   app.options('*', cors());
   app.use(logger);
