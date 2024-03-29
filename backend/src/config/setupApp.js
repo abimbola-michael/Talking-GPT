@@ -19,10 +19,8 @@ const limiter = rateLimit({
 
 const corsOptions = {
   origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credential: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 200,
+  credentials: true,
+  optionSuccessStatus: 200,
 };
 
 export default function setUpApp(app) {
