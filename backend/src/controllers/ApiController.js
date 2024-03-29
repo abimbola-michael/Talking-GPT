@@ -38,7 +38,7 @@ class ApiControllers {
    * @param {} res
    */
   static getIp(req, res) {
-    return res.send(req.headers['x-forwarded-for']);
+    return res.send(req.headers['X-Forwarded-For']);
   }
 }
 
