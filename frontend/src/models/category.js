@@ -1,9 +1,9 @@
 //Do for this
 class Category {
-  constructor(id, name, time, chats = []) {
+  constructor(id, name, date, chats = []) {
     this.id = id;
     this.name = name;
-    this.time = time;
+    this.date = date;
     this.chats = chats;
   }
   // static fromMap(map) {

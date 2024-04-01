@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LoginButton from "../components/LoginButton";
 import OpenAiLogo from "../components/OpenAiLogo";
 import { useNavigate } from "react-router-dom";
-import { appBgColor, onTint, tint } from "../colors";
+import { onTint, tint } from "../colors";
 
 export default function StartPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // if (localStorage.getItem("token")) {
+    //   navigate("/home");
+    // }
+  }, []);
   function gotoLogin() {
     navigate("/login");
   }

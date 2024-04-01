@@ -1,9 +1,21 @@
 //Do for this
 class User {
-  constructor(id, name, email, timeJoined) {
+  constructor(
+    id,
+    firstname,
+    lastname,
+    email,
+    timeJoined,
+    categories,
+    createdAt
+  ) {
     this.id = id;
-    this.name = name;
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.email = email;
     this.timeJoined = timeJoined;
+    this.categories = categories;
+    this.createdAt = createdAt;
   }
 }
+export default User;

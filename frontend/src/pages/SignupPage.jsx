@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import LoginButton from "../components/LoginButton";
 import LoginInput from "../components/LoginInput";
 import OpenAiLogo from "../components/OpenAiLogo";
-import OutlinedButton from "../components/OutlinedButton";
 import { onTint, tint } from "../colors";
 import { createUser, getUser } from "../services/authService";
 import { useRef } from "react";
@@ -22,7 +21,7 @@ export default function SignupPage() {
       lastNameRef.current
     );
     if (result) {
-      navigate("/home");
+      navigate("/login");
     }
   }
   async function gotoLogin() {
