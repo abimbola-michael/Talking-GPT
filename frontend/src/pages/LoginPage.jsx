@@ -4,14 +4,20 @@ import LoginInput from "../components/LoginInput";
 import OpenAiLogo from "../components/OpenAiLogo";
 import OutlinedButton from "../components/OutlinedButton";
 import { onTint, tint } from "../colors";
-import { getUser } from "../services/authService";
+import { getUser, getLoginToken } from "../services/authService";
+import { useRef } from "react";
 export default function LoginPage() {
   const navigate = useNavigate();
+  const emailRef = useRef("");
+  const passwordRef = useRef("");
+
   async function login() {
-    const user = await getUser();
-    if (user) {
-      navigate("/home");
-    }
+    const token = await getLoginToken(emailRef.current, passwordRef.current);
+    if (!token) return;
+    const user = await getUser(emailRef.current, passwordRef.current);
+    // if (user) {
+    // }
+    navigate("/home");
   }
   function gotoSignup() {
     navigate("/signup");
@@ -32,7 +38,18 @@ export default function LoginPage() {
         <OpenAiLogo color={onTint} />
       </div>
       <p className="font-bold text-3xl pt-[150px]">Welcome back</p>
-      <LoginInput placeholder={"Email Address"} />
+      <LoginInput
+        placeholder={"Email Address"}
+        onChange={(val) => {
+          emailRef.current = val;
+        }}
+      />
+      <LoginInput
+        placeholder={"Password"}
+        onChange={(val) => {
+          passwordRef.current = val;
+        }}
+      />
       <LoginButton title={"Continue"} onClick={login} />
       <p className="text-sm">
         {"Don't have an account?"}{" "}

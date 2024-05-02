@@ -36,7 +36,7 @@ export default function HomePage() {
   const [chats, setChats] = useState([]);
   const [searchedchats, setSearchedchats] = useState([]);
 
-  const [selectedCategory, setSelectedCategory] = useState("General");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [editCategory, setEditCategory] = useState(null);
 
   const [categoriesGroups, setCategoriesGroups] = useState([]);
@@ -58,9 +58,7 @@ export default function HomePage() {
 
   const speakMessagesRef = useRef([]);
   const speakMessageIndexRef = useRef(-1);
-  let testMessage = `Hi ${
-    user?.firstname ?? "Michael"
-  }, How may i assist you today?`;
+  let testMessage = `Hi ${user?.firstname ?? ""},\nHow may i assist you today?`;
 
   useEffect(() => {
     setVoices(window.speechSynthesis.getVoices());
@@ -68,23 +66,37 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    getUser().then((user) => {
-      setUser(user);
-      if (user.categories) {
-        categoriesRef.current = user.categories;
-        const groups = getCategoriesGroups(user.categories);
-        setCategoriesGroups(groups);
-      } else {
-        createCategory("General").then((category) => {
-          const categories = [
-            new Category(category.id, category.name, category.time),
-          ];
-          user.categories = categories;
+    getUser()
+      .then((user) => {
+        setUser(user);
+        if (user.categories.length > 0) {
+          setSelectedCategory(
+            user.categories.find((cat) => cat.name === "General")
+          );
+
           categoriesRef.current = user.categories;
-          setCategoriesGroups([new CategoryGroup("Today", categories)]);
-        });
-      }
-    });
+          const groups = getCategoriesGroups(user.categories);
+          setCategoriesGroups(groups);
+        } else {
+          createCategory("General").then((category) => {
+            const newCategory = new Category(
+              category.id,
+              category.name,
+              category.time,
+              category.chats
+            );
+
+            const categories = [newCategory];
+            setSelectedCategory(newCategory);
+            user.categories = categories;
+            categoriesRef.current = user.categories;
+            setCategoriesGroups([new CategoryGroup("Today", categories)]);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   }, []);
   //Listening
   useEffect(() => {
@@ -95,14 +107,12 @@ export default function HomePage() {
       if (isSpeaking) {
         stopSpeaking();
       }
-      console.log("listening");
     };
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       if (transcript.length > 0) {
         const fullMessage = messageRef.current + " " + transcript;
-        console.log("message", transcript);
         setTranscriptMessage(fullMessage);
         messageRef.current = fullMessage;
       }
@@ -180,14 +190,6 @@ export default function HomePage() {
       }
     };
     utterance.onend = () => {
-      console.log(
-        "lengt",
-        speakMessageIndexRef.current,
-        "message",
-        speakMessagesRef.current[speakMessageIndexRef.current],
-        "mwssages",
-        speakMessagesRef.current.length
-      );
       if (
         speakMessageIndexRef.current ===
         speakMessagesRef.current.length - 1
@@ -244,12 +246,6 @@ export default function HomePage() {
     }
   }
 
-  // function toggleMode(newMode) {
-  //   if (newMode !== mode) {
-  //     setMode(newMode);
-  //   }
-  // }
-
   function toggleMode() {
     messageRef.current = "";
     setTranscriptMessage("");
@@ -258,7 +254,7 @@ export default function HomePage() {
       stopListening();
       setSpeakIndex(chats.length);
       if (chats.length === 0) {
-        speak("Hi Michael, How may I assist you today?");
+        speak(testMessage);
       } else {
         startListening();
       }
@@ -279,6 +275,9 @@ export default function HomePage() {
     setIsOpened((isOpened) => !isOpened);
   }
   function addChat(chat) {
+    user.categories
+      .find((cat) => cat.id === selectedCategory?.id)
+      ?.chats.push(chat);
     setChats((prevChats) => {
       const newChats = [...prevChats, chat];
       const promptMessage = getPrompt(newChats);
@@ -297,10 +296,10 @@ export default function HomePage() {
     if (transcriptMessage.length > 0) {
       setTranscriptMessage("");
     }
-    createChat(selectedCategory);
     const id = generateRandomString();
     //const id = "";
     const chat = new Chat(id, message, "", Date.now(), "success");
+
     addChat(chat);
   }
 
@@ -318,8 +317,6 @@ export default function HomePage() {
       });
       //const res = chatCompletion?.choices[0].message.content;
       //  console.log("response", res);
-
-      // let minSpeakLength = 10;
 
       for await (const chunk of stream) {
         const res = chunk.choices[0]?.delta?.content || "";
@@ -349,7 +346,13 @@ export default function HomePage() {
       setChats((chats) =>
         chats.map((chat) =>
           chat.id === id
-            ? new Chat(id, chat.prompt, chat.response, Date.now(), "success")
+            ? new Chat(
+                id,
+                chat?.prompt ?? "",
+                chat?.response ?? "",
+                Date.now(),
+                "success"
+              )
             : chat
         )
       );
@@ -359,6 +362,8 @@ export default function HomePage() {
           speak(speakMessagesRef.current[0]);
         }
       }
+      // const chat = chats[chats.length - 1];
+      // createChat(selectedCategory.id, chat.prompt, chat.response, chat.status);
     } catch (e) {
       setChats((chats) =>
         chats.map((chat) =>
@@ -371,6 +376,8 @@ export default function HomePage() {
       if (mode === "voice") {
         speak(e.message);
       }
+      const chat = chats[chats.length - 1];
+      createChat(selectedCategory.id, chat.prompt, chat.response, chat.status);
     }
   }
 
@@ -451,7 +458,9 @@ export default function HomePage() {
     stopEditingCategory();
   }
   function deleteChatCategory(categoryGroupTitle, categoryId) {
-    deleteCategory(categoryId);
+    if (categoryId !== "") {
+      deleteCategory(categoryId);
+    }
     setCategoriesGroups((catGroups) =>
       catGroups.map((catGroup) =>
         catGroup.title === categoryGroupTitle
@@ -473,7 +482,7 @@ export default function HomePage() {
   }
 
   function createNewCategory() {
-    if (editCategory === "") {
+    if (editCategory === "" || editCategory === "General") {
       return;
     }
     //const id = (Math.random() * 10000).toString();
@@ -496,8 +505,8 @@ export default function HomePage() {
     setEditCategory("");
   }
   function loadChats(category) {
-    setSelectedCategory(category.id);
-    setChats(category.chats);
+    setSelectedCategory(category);
+    setChats(category.chats.map((chat) => chat));
     closeSideView();
   }
   function searchChats(value) {
@@ -600,7 +609,7 @@ export default function HomePage() {
           setSearching={setSearching}
           toggleSearch={toggleSearch}
           mode={mode}
-          categoryName={selectedCategory}
+          categoryName={selectedCategory?.name}
           setOpened={toggleOpened}
           onRightClick={createNewCategory}
           onSearch={searchChats}

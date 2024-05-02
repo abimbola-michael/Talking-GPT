@@ -48,7 +48,10 @@ export function getChatOutputs(message) {
 
 function getRelativeDate(date) {
   const now = new Date();
-  const difference = Math.floor((now - date) / (1000 * 3600 * 24)); // Difference in days
+  const dateValue = new Date(date);
+  console.log("date", date);
+  const difference = Math.floor((now - dateValue) / (1000 * 3600 * 24)); // Difference in days
+  console.log("difference", difference);
 
   if (difference <= 0) {
     return "Today";
@@ -59,23 +62,23 @@ function getRelativeDate(date) {
   } else if (difference <= 30) {
     return "Previous 30 days";
   } else {
-    return date.getFullYear().toString();
+    return dateValue.getFullYear().toString();
   }
 }
 export function getCategoriesGroups(categories) {
-  categories.sort((a, b) => b.date - a.date);
+  //categories.sort((a, b) => new Date(b.date) - new Date(a.date));
   const categoriesGroups = [];
 
   for (let i = 0; i < categories.length; i++) {
     const category = categories[i];
-    const catTitle = getRelativeDate(new Date(category.date));
+    const catTitle = getRelativeDate(category.date);
     const catIndex = categoriesGroups.findIndex(
       (cat) => cat.title === catTitle
     );
     const newCategory = new Category(
       category.id,
       category.name,
-      category.time,
+      category.date,
       category.chats
     );
 
@@ -146,7 +149,6 @@ export function formatTime(milliseconds) {
 }
 
 export function getPrompt(chats) {
-  //const extraMessage = "ai:";
   const maxTokens = 4096;
   let strings = [];
   let tokenCount = 0;
@@ -250,7 +252,6 @@ export function getReadableMessages(message, prevMessages = []) {
         ) {
           symbolName = "Full Stop";
         }
-        //wordMessage = wordMessage.trim() + ` ${symbolName} `;
         if (
           char === "'" &&
           j - 1 >= 0 &&
@@ -273,13 +274,7 @@ export function getReadableMessages(message, prevMessages = []) {
       }
     }
     wordMessage += " ";
-
-    // readableMessage += wordMessage.trim() + " ";
   }
   messages.push(wordMessage.trim());
-
-  // if (wordMessage.trim().length > 0) {
-  // }
-  // return readableMessage.trim();
   return messages;
 }
