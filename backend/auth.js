@@ -1,20 +1,21 @@
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth2').Strategy
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
-passport.use(new GoogleStrategy({
+passport.use(new GoogleStrategy(
+  {
     clientID: process.env.clientID,
     clientSecret: process.env.clientSecret,
-    callbackURL: "/auth/google/redirect",
+    callbackURL: '/auth/google/redirect',
     passReqToCallback: true,
   },
-  function(request, accessToken, refreshToken, profile, done) {
-    return done(null, profile);
-  }));
-  
-  passport.serializeUser(function(user, done) {
-    done(null, user);
-  });
-  
-  passport.deserializeUser(function(user, done) {
-    done(null, user);
-  });
+  (request, accessToken, refreshToken, profile, done) => done(null, profile),
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+

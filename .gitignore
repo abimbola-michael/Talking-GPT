@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.env
+config.js
+
+# ignore build directory 
+.build/ 
+
+# ignore node_modules directory
+node_modules/
+
+# ignore .env* files 
+.env* 
+
+# exclude package-lock.json 
+package-lock.json
+
+# exclude swap files 
+*.swp

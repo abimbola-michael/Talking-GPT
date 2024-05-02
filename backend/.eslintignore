@@ -1,0 +1,8 @@
+# ESLint ignore file
+
+# Exclude all files within the "src/schemas/" folder
+./src/schemas/
+
+# You can add other exclusion patterns here
+# For example, to exclude all .test.js files
+# **/__tests__/*.js

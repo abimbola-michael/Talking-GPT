@@ -1,0 +1,19 @@
+{
+  "$id": "updateChat", 
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    }, 
+    "response": {
+      "type": "string"
+    }, 
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed"], 
+      "default": "success"
+    }
+  },
+  "additionalProperties": false, 
+  "minProperties": 1
+}
