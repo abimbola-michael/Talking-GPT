@@ -21,7 +21,7 @@ passport.authenticate('google', {scope: ['email', 'profile']}))
 
 app.get('/google/callback', 
 passport.authenticate('google', {
-    successRedirect: '/protected',
+    successRedirect: '/pages/StartPage',
     failureRedirect: 'auth/failure',
 }))
 app.get('/auth/failure', (req, res) =>{
